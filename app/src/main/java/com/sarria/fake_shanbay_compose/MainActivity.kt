@@ -5,11 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.sarria.fake_shanbay_compose.ui.home.Main
@@ -40,11 +43,13 @@ fun ShanBayApp() {
     var splashed by rememberSaveable {
         mutableStateOf(false)
     }
-    Crossfade(splashed) {
-        if (it) {
-            Main()
-        } else {
-            Splash { splashed = true }
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Crossfade(splashed) {
+            if (it) {
+                Main()
+            } else {
+                Splash { splashed = true }
+            }
         }
     }
 }

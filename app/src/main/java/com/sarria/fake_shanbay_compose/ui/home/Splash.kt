@@ -83,7 +83,7 @@ private fun SplashContent(onSplashEnd: () -> Unit) {
                 .scale(scale = scale.value)
                 .alpha(alpha = alpha.value)
                 .rotate(degrees = rotation.value),
-            painter = painterResource(id = R.drawable.compose_logo),
+            painter = painterResource(id = R.mipmap.compose_logo),
             contentDescription = "compose logo"
         )
     }
