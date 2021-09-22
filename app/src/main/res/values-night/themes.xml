@@ -3,6 +3,13 @@
     <style name="Theme.Fake_shanBay_compose" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+<!--        <item name="android:windowBackground">@drawable/shanbay_splash</item>-->
+    </style>
+
+    <style name="Theme.Fake_shanBay_compose.Splash" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+<!--        <item name="android:windowFullscreen">true</item>-->
         <item name="android:windowBackground">@drawable/shanbay_splash</item>
     </style>
 </resources>

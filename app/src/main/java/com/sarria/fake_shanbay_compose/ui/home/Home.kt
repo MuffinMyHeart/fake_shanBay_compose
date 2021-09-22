@@ -25,19 +25,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Home() {
-    var needToSplash by rememberSaveable {
-        mutableStateOf(true)
-    }
-
-    if (needToSplash) {
-        SplashScreen(onNeedToSplash = { needToSplash = !needToSplash })
-    } else {
-        HomeScreen()
-    }
-}
-
-@Composable
-fun HomeScreen() {
     Scaffold(
         topBar = {
             HomeTopAppBar()
@@ -52,57 +39,14 @@ fun HomeScreen() {
     }
 }
 
-//闪屏页
-@Composable
-fun SplashScreen(onNeedToSplash: () -> Unit = {}) {
-
-    Surface(
-        color = MaterialTheme.colors.background,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .systemBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.compose_logo),
-                contentDescription = null
-            )
-
-            Text(text = "这是一个compose 测试")
-        }
-    }
-
-
-    //3秒后进入home
-//    LaunchedEffect(key1 = true) {
-//        launch {
-//            delay(3000)
-//            onNeedToSplash()
-//        }
-//    }
-}
-
 @Composable
 fun HomeTopAppBar() {
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .statusBarsPadding(),
     ) {
-        Row(
-            modifier = Modifier.statusBarsPadding()
-        ) {
-            Text(text = "这是一个简单的appbar")
-        }
+        Text(text = "简单")
     }
 }
 
-@Preview
-@Composable
-fun SplashPreview() {
-    Fake_shanBay_composeTheme {
-        SplashScreen()
-    }
-}

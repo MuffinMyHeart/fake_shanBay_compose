@@ -8,8 +8,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 //private val DarkColorPalette = darkColors(
 //    primary = Purple200,
@@ -22,14 +24,14 @@ import androidx.compose.ui.graphics.Color
 
 @SuppressLint("ConflictingOnColor")
 private val LightThemeColor = lightColors(
-    background = Color.White,
-    onBackground = Color.Black
+    surface = Color.White,
+    onSurface = Color.Black
 )
 
 @SuppressLint("ConflictingOnColor")
 private val DarkThemeColor = darkColors(
-    background = Color.Black,
-    onBackground = Color.White
+    surface = Color.Black,
+    onSurface = Color.White
 )
 
 @Composable
@@ -48,11 +50,17 @@ fun Fake_shanBay_composeTheme(
         typography = Typography,
         shapes = Shapes,
     ) {
-        Surface(
-            color = MaterialTheme.colors.background,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            content()
+
+        val uiController = rememberSystemUiController()
+        val useDarkIcon = MaterialTheme.colors.isLight
+        //状态栏透明
+        SideEffect {
+            uiController.setSystemBarsColor(
+                color = Color.Transparent,
+                darkIcons = useDarkIcon
+            )
         }
+
+        content()
     }
 }
