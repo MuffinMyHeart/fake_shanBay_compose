@@ -1,36 +1,35 @@
 package com.sarria.fake_shanbay_compose.ui.home
 
 import android.net.Uri
-import android.net.wifi.WifiManager
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.outlined.AccountBox
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.rounded.AccountBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.accompanist.insets.systemBarsPadding
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.ui.theme.VioletDark
 import com.sarria.fake_shanbay_compose.ui.utils.rememberVideoViewWithLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun Login(onLoginEnd: () -> Unit = {}) {
@@ -47,71 +46,159 @@ fun LoginContent(onLoginEnd: () -> Unit) {
     Column(
         modifier = Modifier
             .systemBarsPadding()
-            .padding(vertical = 32.dp),
+            .padding(vertical = 28.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
-            LoginAppBar()
-            LoginText()
+        val loginAlphaState = remember {
+            LoginAlphaState()
         }
 
-        Column(verticalArrangement = Arrangement.SpaceBetween) {
-            LoginRow()
-            OtherLoginRow()
+        LaunchedEffect(key1 = Unit) {
+            val animateSpec = tween<Float>(
+                durationMillis = 2000,
+                easing = FastOutLinearInEasing
+            )
+            var sumDelay = 500L
+            val incrementDelay = 150L
+            launch {
+                sumDelay += incrementDelay
+                delay(sumDelay)
+                loginAlphaState.appbarAlpha.animateTo(1f, animateSpec)
+            }
+            launch {
+                sumDelay += incrementDelay
+                delay(sumDelay)
+                loginAlphaState.englishTextAlpha.animateTo(1f, animateSpec)
+            }
+            launch {
+                sumDelay += incrementDelay
+                delay(sumDelay)
+                loginAlphaState.chineseTextAlpha.animateTo(1f, animateSpec)
+            }
+            launch {
+                sumDelay += incrementDelay
+                delay(sumDelay)
+                loginAlphaState.loginAlpha.animateTo(1f, animateSpec)
+            }
+            launch {
+                sumDelay += incrementDelay
+                delay(sumDelay)
+                loginAlphaState.otherLoginAlpha.animateTo(1f, animateSpec)
+            }
+            launch {
+                sumDelay += incrementDelay
+                delay(sumDelay)
+                loginAlphaState.agreementAlpha.animateTo(1f, animateSpec)
+            }
+        }
+
+        Column {
+            LoginAppBar(
+                modifier = Modifier
+                    .alpha(loginAlphaState.appbarAlpha.value)
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 24.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LoginText(
+                modifier = Modifier.padding(horizontal = 32.dp),
+                englishAlpha = loginAlphaState.englishTextAlpha.value,
+                chineseAlpha = loginAlphaState.chineseTextAlpha.value
+            )
+        }
+
+        Column {
+            LoginRow(
+                modifier = Modifier
+                    .alpha(loginAlphaState.loginAlpha.value)
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            OtherLoginRow(
+                modifier = Modifier
+                    .alpha(loginAlphaState.otherLoginAlpha.value)
+                    .padding(horizontal = 64.dp)
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(48.dp))
+            BottomAgreement(
+                modifier = Modifier
+                    .alpha(loginAlphaState.agreementAlpha.value)
+                    .align(Alignment.CenterHorizontally)
+            )
         }
     }
 }
 
 @Composable
-fun OtherLoginRow() {
+fun BottomAgreement(modifier: Modifier) {
+    Text(modifier = modifier, fontSize = 12.sp, color = Color.White, text = "同意条款")
+}
+
+@Composable
+fun OtherLoginRow(modifier: Modifier) {
     Row(
-        modifier = Modifier
-            .padding(horizontal = 48.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Surface(
-            modifier = Modifier.size(48.dp),
-            shape = CircleShape,
-            color = Color.Black,
-            contentColor = Color.White
-        ) {
-            Icon(imageVector = Icons.Rounded.AccountBox, contentDescription = "")
-        }
+        val cycleColor = VioletDark
+        val cycleSize = 48.dp
 
-        Surface(
-            shape = CircleShape,
-            color = Color.Black,
-            contentColor = Color.White
-        ) {
-            Icon(imageVector = Icons.Outlined.AccountBox, contentDescription = "")
-        }
 
-        Surface(
-            shape = CircleShape,
-            color = Color.Black,
-            contentColor = Color.White
-        ) {
-            Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "")
-        }
+        Image(
+            modifier = Modifier
+                .size(cycleSize)
+                .clip(CircleShape)
+                .background(cycleColor)
+                .padding(12.dp),
+            contentScale = ContentScale.Inside,
+            painter = painterResource(id = R.drawable.ic_apple),
+            contentDescription = "apple"
+        )
 
-        Surface(
-            shape = CircleShape,
-            color = Color.Black,
-            contentColor = Color.White
-        ) {
-            Icon(imageVector = Icons.Default.AccountBox, contentDescription = "")
-        }
+
+
+        Image(
+            modifier = Modifier
+                .size(cycleSize)
+                .clip(CircleShape)
+                .background(cycleColor)
+                .padding(12.dp),
+            contentScale = ContentScale.Inside,
+            painter = painterResource(id = R.drawable.ic_qq),
+            contentDescription = "qq"
+        )
+
+        Image(
+            modifier = Modifier
+                .size(cycleSize)
+                .clip(CircleShape)
+                .background(cycleColor)
+                .padding(12.dp),
+            contentScale = ContentScale.Inside,
+            painter = painterResource(id = R.drawable.ic_weibo),
+            contentDescription = "weibo"
+        )
+
+        Image(
+            modifier = Modifier
+                .size(cycleSize)
+                .clip(CircleShape)
+                .background(cycleColor)
+                .padding(12.dp),
+            contentScale = ContentScale.Inside,
+            painter = painterResource(id = R.drawable.ic_shanbay),
+            contentDescription = "apple"
+        )
 
     }
 }
 
 @Composable
-fun LoginRow() {
+fun LoginRow(modifier: Modifier) {
     Column(
-        modifier = Modifier
-            .padding(horizontal = 32.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Button(
@@ -119,19 +206,29 @@ fun LoginRow() {
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = RoundedCornerShape(64.dp),
             onClick = { }) {
-            Icon(imageVector = Icons.Outlined.Phone, contentDescription = "phone icon")
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_phone),
+                contentDescription = "wechat"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = "手机号登录")
         }
         Button(
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.LightGray,
+                backgroundColor = Color.White.copy(alpha = 0.35f),
                 contentColor = Color.White
             ),
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = RoundedCornerShape(64.dp),
             onClick = { }) {
-            Icon(imageVector = Icons.Outlined.List, contentDescription = "wechat")
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_wechat),
+                contentDescription = "wechat"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = "微信登录")
         }
 
@@ -139,11 +236,9 @@ fun LoginRow() {
 }
 
 @Composable
-fun LoginAppBar() {
+fun LoginAppBar(modifier: Modifier) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 32.dp, end = 24.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
@@ -166,24 +261,28 @@ fun LoginAppBar() {
 }
 
 @Composable
-fun LoginText() {
-    Text(
-        modifier = Modifier
-            .padding(start = 32.dp, end = 32.dp, top = 16.dp)
-            .width(280.dp),
-        text = "Read what the world reads",
-        color = Color.White.copy(0.9f),
-        style = MaterialTheme.typography.h2,
-    )
+fun LoginText(modifier: Modifier, englishAlpha: Float, chineseAlpha: Float) {
+    Column(modifier = modifier) {
+        Text(
+            modifier = Modifier
+                .alpha(englishAlpha)
+                .width(280.dp),
+            text = "Read what the world reads",
+            color = Color.White.copy(0.9f),
+            style = MaterialTheme.typography.h2,
+        )
 
-    Text(
-        modifier = Modifier
-            .padding(start = 32.dp, end = 32.dp, top = 16.dp)
-            .width(240.dp),
-        text = "扇贝阅读\n陪你一起, 读懂世界",
-        color = Color.White.copy(0.83f),
-        style = MaterialTheme.typography.h5
-    )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier
+                .alpha(chineseAlpha)
+                .width(240.dp),
+            text = "扇贝阅读\n陪你一起, 读懂世界",
+            color = Color.White.copy(0.83f),
+            style = MaterialTheme.typography.h5
+        )
+    }
 }
 
 @Composable
@@ -199,6 +298,15 @@ fun VideoBackground() {
         }
         video.start()
     }
+}
+
+class LoginAlphaState {
+    val appbarAlpha = Animatable(0f)
+    val englishTextAlpha = Animatable(0f)
+    val chineseTextAlpha = Animatable(0f)
+    val loginAlpha = Animatable(0f)
+    val otherLoginAlpha = Animatable(0f)
+    val agreementAlpha = Animatable(0f)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
