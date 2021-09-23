@@ -24,6 +24,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @SuppressLint("ConflictingOnColor")
 private val LightThemeColor = lightColors(
+    primary = Color(0xFF39C8B0),
     surface = Color.White,
     onSurface = Color.Black
 )
