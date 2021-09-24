@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
-import com.sarria.fake_shanbay_compose.ui.home.Main
+import com.sarria.fake_shanbay_compose.ui.Main
 import com.sarria.fake_shanbay_compose.ui.splash.Splash
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 

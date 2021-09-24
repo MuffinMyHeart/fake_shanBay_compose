@@ -1,10 +1,13 @@
-package com.sarria.fake_shanbay_compose.ui.home
+package com.sarria.fake_shanbay_compose.ui
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.sarria.fake_shanbay_compose.ui.home.Home
+import com.sarria.fake_shanbay_compose.ui.login.Login
 
 //主屏幕
 @Composable
@@ -12,9 +15,11 @@ fun Main() {
     var login by rememberSaveable {
         mutableStateOf(false)
     }
-    if (login) {
-        Home()
-    } else {
-        Login { login = true }
+    Crossfade(targetState = login) {
+        if (it) {
+            Home()
+        } else {
+            Login { login = true }
+        }
     }
 }

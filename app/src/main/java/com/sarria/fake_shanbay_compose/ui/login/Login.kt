@@ -1,10 +1,7 @@
-package com.sarria.fake_shanbay_compose.ui.home
+package com.sarria.fake_shanbay_compose.ui.login
 
 import android.net.Uri
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -58,8 +55,8 @@ fun LoginContent(onLoginEnd: () -> Unit) {
                 durationMillis = 2000,
                 easing = FastOutLinearInEasing
             )
-            var sumDelay = 500L
-            val incrementDelay = 150L
+            var sumDelay = 200L
+            val incrementDelay = 100L
             launch {
                 sumDelay += incrementDelay
                 delay(sumDelay)
@@ -112,7 +109,8 @@ fun LoginContent(onLoginEnd: () -> Unit) {
                 modifier = Modifier
                     .alpha(loginAlphaState.loginAlpha.value)
                     .padding(horizontal = 32.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                onLoginEnd = onLoginEnd
             )
             Spacer(modifier = Modifier.height(24.dp))
             OtherLoginRow(
@@ -196,7 +194,7 @@ fun OtherLoginRow(modifier: Modifier) {
 }
 
 @Composable
-fun LoginRow(modifier: Modifier) {
+fun LoginRow(modifier: Modifier, onLoginEnd: () -> Unit) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -205,7 +203,7 @@ fun LoginRow(modifier: Modifier) {
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = RoundedCornerShape(64.dp),
-            onClick = { }) {
+            onClick = { onLoginEnd() }) {
             Icon(
                 modifier = Modifier.size(16.dp),
                 painter = painterResource(id = R.drawable.ic_phone),
@@ -222,7 +220,7 @@ fun LoginRow(modifier: Modifier) {
             ),
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = RoundedCornerShape(64.dp),
-            onClick = { }) {
+            onClick = { onLoginEnd() }) {
             Icon(
                 modifier = Modifier.size(16.dp),
                 painter = painterResource(id = R.drawable.ic_wechat),
