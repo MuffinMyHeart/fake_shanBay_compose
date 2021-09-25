@@ -1,33 +1,26 @@
 package com.sarria.fake_shanbay_compose.ui.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.statusBarsPadding
-import com.google.accompanist.insets.systemBarsPadding
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
 import com.sarria.fake_shanbay_compose.R
-import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@ExperimentalPagerApi
 @Composable
 fun Home() {
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -39,17 +32,63 @@ fun Home() {
                     .padding(top = 24.dp, start = 16.dp, end = 16.dp)
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .background(Color.LightGray)
-            ) {
+            ScrollPage(Modifier.fillMaxSize())
+        }
+    }
+}
 
+@ExperimentalPagerApi
+@Composable
+fun ScrollPage(modifier: Modifier) {
+    Column(modifier = modifier) {
+        val pages = remember {
+            listOf("推荐", "畅du会员", "赠礼盒", "短文", "经典", "小说", "人物", "科普", "生活")
+        }
+        val coroutineScope = rememberCoroutineScope()
+        val pagerState = rememberPagerState(pageCount = pages.size)
 
+        ScrollableTabRow(
+            selectedTabIndex = pagerState.currentPage,
+            indicator = {
+                TabRowDefaults.Indicator(
+                    Modifier.pagerTabIndicatorOffset(pagerState, it)
+                )
+            }
+        ) {
+
+            pages.forEachIndexed { index, title ->
+                Tab(
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                    text = { Text(title) }
+                )
+            }
+        }
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) { page ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                Card(Modifier.padding(16.dp)) {
+                    Box(Modifier.fillMaxSize()) {
+                        Text(
+                            text = "Page: ${pages[page]}",
+                            style = MaterialTheme.typography.h4,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
             }
         }
     }
+
 }
 
 @Composable
@@ -77,7 +116,7 @@ fun HomeTopAppBar(modifier: Modifier) {
                 }
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(Color.LightGray.copy(alpha = 0.3f))
+                .background(Color.LightGray)
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
