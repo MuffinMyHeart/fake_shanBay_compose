@@ -35,14 +35,14 @@ fun Home() {
             HomeTopAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .systemBarsPadding()
+                    .statusBarsPadding()
                     .padding(top = 24.dp, start = 16.dp, end = 16.dp)
             )
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(horizontal = 16.dp)
                     .background(Color.LightGray)
             ) {
 
@@ -77,7 +77,7 @@ fun HomeTopAppBar(modifier: Modifier) {
                 }
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(Color.LightGray)
+                .background(Color.LightGray.copy(alpha = 0.3f))
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

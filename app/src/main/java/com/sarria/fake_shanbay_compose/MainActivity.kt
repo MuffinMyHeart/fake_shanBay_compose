@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.sarria.fake_shanbay_compose.ui.Main
+import com.sarria.fake_shanbay_compose.ui.login.Login
 import com.sarria.fake_shanbay_compose.ui.splash.Splash
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 
@@ -36,20 +37,21 @@ class MainActivity : ComponentActivity() {
 }
 
 
-//是闪屏页还是主调用流程
+//should login or splash
 @ExperimentalAnimationApi
 @Composable
 fun ShanBayApp() {
-    var splashed by rememberSaveable {
+    var login by rememberSaveable {
         mutableStateOf(false)
     }
+
     Surface(modifier = Modifier.fillMaxSize()) {
-        Crossfade(splashed) {
-            if (it) {
-                Main()
+            if (!login) {
+                Login{login = true}
             } else {
-                Splash { splashed = true }
+                Splash {
+
+                }
             }
-        }
     }
 }

@@ -56,7 +56,7 @@ fun LoginContent(onLoginEnd: () -> Unit) {
                 easing = FastOutLinearInEasing
             )
             var sumDelay = 200L
-            val incrementDelay = 100L
+            val incrementDelay = 80L
             launch {
                 sumDelay += incrementDelay
                 delay(sumDelay)
