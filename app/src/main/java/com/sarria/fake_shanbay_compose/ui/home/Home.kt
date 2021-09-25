@@ -48,10 +48,13 @@ fun ScrollPage(modifier: Modifier) {
         val pagerState = rememberPagerState(pageCount = pages.size)
 
         ScrollableTabRow(
+            backgroundColor = MaterialTheme.colors.surface,
             selectedTabIndex = pagerState.currentPage,
-            indicator = {
+            edgePadding = 0.dp,
+            indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
-                    Modifier.pagerTabIndicatorOffset(pagerState, it)
+                    Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
+                    color = Color.Green
                 )
             }
         ) {
