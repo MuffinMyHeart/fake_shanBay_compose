@@ -55,20 +55,31 @@ fun ShanBayApp() {
         mutableStateOf(false)
     }
 
-    var login by rememberSaveable {
-        mutableStateOf(false)
-    }
-
+//    var login by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//
+//    Surface(modifier = Modifier.fillMaxSize()) {
+//        if (!login){
+//            Login{
+//                login = true
+//                splashed = true
+//            }
+//        } else if (!splashed){
+//            Splash { splashed =true }
+//        } else{
+//            Home()
+//        }
+//    }
     Surface(modifier = Modifier.fillMaxSize()) {
-        if (!login){
-            Login{
-                login = true
-                splashed = true
+        Crossfade(targetState = splashed) {
+            if (it){
+                Main()
+            } else {
+                Splash {
+                    splashed = true
+                }
             }
-        } else if (!splashed){
-            Splash { splashed =true }
-        } else{
-            Home()
         }
     }
 }
