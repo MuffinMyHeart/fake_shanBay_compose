@@ -1,5 +1,11 @@
 package com.sarria.fake_shanbay_compose.ui.home
 
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Interpolator
+import androidx.annotation.FloatRange
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,18 +13,24 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.accompanist.insets.statusBarsPadding
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.*
 import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
 import com.sarria.fake_shanbay_compose.R
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.nextDown
 
 @ExperimentalPagerApi
 @Composable
@@ -53,9 +65,10 @@ fun ScrollPage(modifier: Modifier) {
             selectedTabIndex = pagerState.currentPage,
             edgePadding = 0.dp,
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    Modifier.pagerTabIndicatorOffset(pagerState, tabPositions),
-                    color = Color.Green
+                ShanBayTabIndicator(
+                    pagerState = pagerState,
+                    tabPositions = tabPositions,
+                    height = 2.dp
                 )
             }
         ) {
@@ -162,3 +175,59 @@ fun HomeTopAppBar(modifier: Modifier) {
 
 }
 
+@ExperimentalPagerApi
+@Composable
+fun ShanBayTabIndicator(
+    pagerState: PagerState,
+    tabPositions: List<TabPosition>,
+    width: Dp = 24.dp,
+    height: Dp = 2.dp,
+    color: Color = MaterialTheme.colors.primary
+) {
+    Box(
+        Modifier
+            .composed {
+
+                if (pagerState.pageCount == 0) return@composed this
+
+                val currentTab = tabPositions[pagerState.currentPage]
+                val targetPage = pagerState.fixedTargetPage()
+                val targetTab = tabPositions.getOrNull(targetPage)
+
+                val targetIndicatorOffset = if (targetTab != null) {
+                    val targetDistance = (targetPage - pagerState.currentPage).absoluteValue
+                    //滑动完成百分数
+                    val fraction =
+                        (pagerState.currentPageOffset / max(targetDistance, 1)).absoluteValue
+
+                    //先加速 后减速
+                    val interpolatorFraction =
+                        (cos((fraction + 1) * Math.PI) / 2.0f).toFloat() + 0.5f
+
+                    lerp(
+                        currentTab.left + (currentTab.width - width) / 2,
+                        targetTab.left + (targetTab.width - width) / 2,
+                        interpolatorFraction
+                    )
+                } else {
+                    currentTab.left + (currentTab.width - width) / 2
+                }
+
+                fillMaxWidth()
+                    .wrapContentSize(Alignment.BottomStart)
+                    .offset(targetIndicatorOffset)
+                    .width(width)
+            }
+            .fillMaxWidth()
+            .height(height)
+            .background(color = color)
+    )
+}
+
+@ExperimentalPagerApi
+fun PagerState.fixedTargetPage() = when {
+    !isScrollInProgress -> currentPage
+    currentPageOffset.absoluteValue < 0.001f -> currentPage
+    currentPageOffset < 0 -> (currentPage - 1).coerceAtLeast(0)
+    else -> (currentPage + 1).coerceAtMost((pageCount - 1).coerceAtLeast(0))
+}
