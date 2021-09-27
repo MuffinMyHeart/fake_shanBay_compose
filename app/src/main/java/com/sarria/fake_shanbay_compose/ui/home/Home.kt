@@ -1,5 +1,10 @@
 package com.sarria.fake_shanbay_compose.ui.home
 
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Interpolator
+import androidx.annotation.FloatRange
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,7 +28,9 @@ import com.sarria.fake_shanbay_compose.R
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.nextDown
 
 @ExperimentalPagerApi
 @Composable
@@ -57,7 +64,11 @@ fun ScrollPage(modifier: Modifier) {
             selectedTabIndex = pagerState.currentPage,
             edgePadding = 0.dp,
             indicator = { tabPositions ->
-                ShanBayTabIndicator(pagerState = pagerState, tabPositions = tabPositions)
+                ShanBayTabIndicator(
+                    pagerState = pagerState,
+                    tabPositions = tabPositions,
+                    height = 2.dp
+                )
             }
         ) {
 
@@ -160,30 +171,59 @@ fun HomeTopAppBar(modifier: Modifier) {
 
 }
 
-/**
- * 暗示器
- */
 @ExperimentalPagerApi
 @Composable
 fun ShanBayTabIndicator(
     pagerState: PagerState,
     tabPositions: List<TabPosition>,
+    width: Dp = 24.dp,
+    height: Dp = 2.dp,
+    color: Color = MaterialTheme.colors.primary
 ) {
+    Box(
+        Modifier
+            .composed {
 
-//
+                if (pagerState.pageCount == 0) return@composed this
 
+                val currentTab = tabPositions[pagerState.currentPage]
+                val targetPage = pagerState.fixedTargetPage()
+                val targetTab = tabPositions.getOrNull(targetPage)
+
+                val targetIndicatorOffset = if (targetTab != null) {
+                    val targetDistance = (targetPage - pagerState.currentPage).absoluteValue
+                    //滑动完成百分数
+                    val fraction =
+                        (pagerState.currentPageOffset / max(targetDistance, 1)).absoluteValue
+
+                    //先加速 后减速
+                    val interpolatorFraction =
+                        (cos((fraction + 1) * Math.PI) / 2.0f).toFloat() + 0.5f
+
+                    lerp(
+                        currentTab.left + (currentTab.width - width) / 2,
+                        targetTab.left + (targetTab.width - width) / 2,
+                        interpolatorFraction
+                    )
+                } else {
+                    currentTab.left + (currentTab.width - width) / 2
+                }
+
+                fillMaxWidth()
+                    .wrapContentSize(Alignment.BottomStart)
+                    .offset(targetIndicatorOffset)
+                    .width(width)
+            }
+            .fillMaxWidth()
+            .height(height)
+            .background(color = color)
+    )
 }
 
-//@ExperimentalPagerApi
-//fun PagerState.fixTargetPage(): Int {
-//    return when {
-//        // If a scroll isn't in progress, return the current page
-//        !isScrollInProgress -> currentPage
-//        // If the offset is 0f (or very close), return the current page
-//        currentPageOffset.absoluteValue < 0.001f -> currentPage
-//        // If we're offset towards the start, guess the previous page
-//        currentPageOffset < 0 -> (currentPage - 1).coerceAtLeast(0)
-//        // If we're offset towards the end, guess the next page
-//        else -> (currentPage + 1).coerceAtMost(pageCount - 1)
-//    }
-//}
+@ExperimentalPagerApi
+fun PagerState.fixedTargetPage() = when {
+    !isScrollInProgress -> currentPage
+    currentPageOffset.absoluteValue < 0.001f -> currentPage
+    currentPageOffset < 0 -> (currentPage - 1).coerceAtLeast(0)
+    else -> (currentPage + 1).coerceAtMost((pageCount - 1).coerceAtLeast(0))
+}
