@@ -47,6 +47,7 @@ fun ScrollPage(modifier: Modifier) {
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState(pageCount = pages.size)
 
+
         ScrollableTabRow(
             backgroundColor = MaterialTheme.colors.surface,
             selectedTabIndex = pagerState.currentPage,
@@ -90,6 +91,9 @@ fun ScrollPage(modifier: Modifier) {
                 }
             }
         }
+
+
+
     }
 
 }
