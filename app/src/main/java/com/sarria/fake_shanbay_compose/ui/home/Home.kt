@@ -17,10 +17,12 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
 import com.google.accompanist.pager.pagerTabIndicatorOffset
@@ -70,7 +72,8 @@ fun ScrollPage(modifier: Modifier) {
                     tabPositions = tabPositions,
                     height = 2.dp
                 )
-            }
+            },
+            divider = {}
         ) {
 
             pages.forEachIndexed { index, title ->
@@ -83,6 +86,7 @@ fun ScrollPage(modifier: Modifier) {
                     },
                     text = { Text(title) }
                 )
+
             }
         }
 
@@ -121,8 +125,8 @@ fun HomeTopAppBar(modifier: Modifier) {
         Text(
             modifier = Modifier.constrainAs(leftText) {
                 start.linkTo(parent.start)
-                top.linkTo(centerQuery.top)
-                bottom.linkTo(centerQuery.bottom)
+                centerVerticallyTo(centerQuery)
+
             },
             text = "工作党"
         )
@@ -130,9 +134,10 @@ fun HomeTopAppBar(modifier: Modifier) {
         Row(
             modifier = Modifier
                 .constrainAs(centerQuery) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
+                    start.linkTo(leftText.end,margin = 8.dp)
+                    end.linkTo(rightIcons.start,margin = 8.dp)
                     top.linkTo(parent.top)
+                    width = Dimension.fillToConstraints
                 }
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
@@ -153,8 +158,7 @@ fun HomeTopAppBar(modifier: Modifier) {
             modifier = Modifier
                 .constrainAs(rightIcons) {
                     end.linkTo(parent.end)
-                    top.linkTo(centerQuery.top)
-                    bottom.linkTo(centerQuery.bottom)
+                    centerVerticallyTo(centerQuery)
                 }) {
             Icon(
                 modifier = Modifier
