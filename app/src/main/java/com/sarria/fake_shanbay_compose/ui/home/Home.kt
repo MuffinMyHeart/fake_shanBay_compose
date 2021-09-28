@@ -85,7 +85,7 @@ fun ScrollPage(modifier: Modifier) {
                     pagerState = pagerState,
                     tabPositions = tabPositions,
                     height = 4.dp,
-                    width = 12.dp,
+                    width = 16.dp,
                     colors = colors
                 )
             },
