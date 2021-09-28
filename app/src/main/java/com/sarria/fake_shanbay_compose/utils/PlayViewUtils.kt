@@ -1,7 +1,5 @@
-package com.sarria.fake_shanbay_compose.ui.utils
+package com.sarria.fake_shanbay_compose.utils
 
-import android.media.MediaPlayer
-import android.net.Uri
 import android.widget.VideoView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
