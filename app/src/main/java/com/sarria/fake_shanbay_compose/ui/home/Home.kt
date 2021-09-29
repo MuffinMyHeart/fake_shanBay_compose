@@ -132,9 +132,9 @@ fun ScrollPage(modifier: Modifier) {
                 .weight(1f)
                 .fillMaxWidth()
         ) { page ->
-//            if (page == 0) {
-//                RecommendPage()
-//            } else {
+            if (page == 0) {
+                RecommendPage(modifier = Modifier.fillMaxSize())
+            } else {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Card(Modifier.padding(16.dp), elevation = 1.dp) {
                         Box(Modifier.fillMaxSize()) {
@@ -146,7 +146,7 @@ fun ScrollPage(modifier: Modifier) {
                         }
                     }
                 }
-//            }
+            }
         }
     }
 }
