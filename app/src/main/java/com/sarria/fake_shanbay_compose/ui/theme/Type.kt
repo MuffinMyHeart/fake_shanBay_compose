@@ -17,6 +17,7 @@ private val Montserrat = FontFamily(
 )
 
 val Typography = Typography(
+    defaultFontFamily = Montserrat,
     h1 = TextStyle(
         fontFamily = Montserrat,
         fontSize = 96.sp,

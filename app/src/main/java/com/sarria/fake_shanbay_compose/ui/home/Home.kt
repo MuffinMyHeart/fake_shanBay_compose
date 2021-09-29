@@ -1,9 +1,11 @@
 package com.sarria.fake_shanbay_compose.ui.home
 
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -12,14 +14,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.lerp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.insets.statusBarsPadding
@@ -28,6 +34,9 @@ import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
 import com.sarria.fake_shanbay_compose.ui.commonLayout.TabPosition
+import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
+import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
+import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
@@ -79,7 +88,7 @@ fun ScrollPage(modifier: Modifier) {
         ScrollableTabRow(
             backgroundColor = MaterialTheme.colors.surface,
             selectedTabIndex = pagerState.currentPage,
-            edgePadding = 4.dp,
+            edgePadding = 0.dp,
             indicator = { tabPositions ->
                 ShanBayTabIndicator(
                     pagerState = pagerState,
@@ -98,17 +107,24 @@ fun ScrollPage(modifier: Modifier) {
                     modifier = Modifier.padding(4.dp),
                     selected = pagerState.currentPage == index,
                     onClick = {},
+                    selectedContentColor = LocalContentColor.current.copy(.73f),
+                    unselectedContentColor = LocalContentColor.current.copy(ContentAlpha.disabled)
                 ) {
-                    Text(modifier = Modifier
-                        .clickable {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
                             }
-                        }
-                        .padding(vertical = 8.dp), text = title)
+                            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
+                        text = title,
+                        style = LocalTextStyle.current.copy(fontWeight = FontWeight(530)))
                 }
+
             }
         }
+
 
         HorizontalPager(
             state = pagerState,
@@ -116,9 +132,9 @@ fun ScrollPage(modifier: Modifier) {
                 .weight(1f)
                 .fillMaxWidth()
         ) { page ->
-            if (page == 0) {
-                TestPage()
-            } else {
+//            if (page == 0) {
+//                RecommendPage()
+//            } else {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Card(Modifier.padding(16.dp), elevation = 1.dp) {
                         Box(Modifier.fillMaxSize()) {
@@ -130,65 +146,14 @@ fun ScrollPage(modifier: Modifier) {
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-class UserState {
-    var userName by mutableStateOf("")
-    var password by mutableStateOf("")
-}
-
-data class User(
-    var userName: String = "",
-    var password: String = ""
-)
-
-@Composable
-fun TestPage() {
-    val users = remember {
-        listOf(mutableStateOf(User()), mutableStateOf(User()))
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        users.forEachIndexed { index, user ->
-            Row {
-                TextField(
-                    modifier = Modifier.width(200.dp),
-                    value = user.value.userName,
-                    onValueChange = { user.value = user.value.copy(userName = it) },
-                    label = {
-                        Text(
-                            text = "用户$index 用户名"
-                        )
-                    })
-                Text(text = "用户$index 的用户名为 ${user.value.userName}")
-
-            }
-            Row {
-                TextField(
-                    modifier = Modifier.width(200.dp),
-                    value = user.value.password,
-                    onValueChange = { user.value = user.value.copy(password = it) },
-                    label = {
-                        Text(
-                            text = "用户$index 密码"
-                        )
-                    })
-                Text(text = "用户$index 的密码为 ${user.value.password}")
-            }
+//            }
         }
     }
 }
 
 
 @Composable
-fun HomeTopAppBar(modifier: Modifier) {
+fun HomeTopAppBar(modifier: Modifier = Modifier) {
 
     //这边要用constrain layout 因为需要将搜索栏固定到中心位置但是目前row没有给我们提供这个选项
 
@@ -200,30 +165,38 @@ fun HomeTopAppBar(modifier: Modifier) {
                 centerVerticallyTo(centerQuery)
 
             },
-            text = "工作党"
+            text = "工作党",
+            fontWeight = FontWeight(530),
+            color = LocalContentColor.current.copy(alpha = .5f)
         )
 
         Row(
             modifier = Modifier
                 .constrainAs(centerQuery) {
                     start.linkTo(leftText.end, margin = 8.dp)
-                    end.linkTo(rightIcons.start, margin = 8.dp)
+                    end.linkTo(rightIcons.start, margin = 16.dp)
                     top.linkTo(parent.top)
                     width = Dimension.fillToConstraints
                 }
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colors.background.copy(alpha = .5f))
+                .background(MaterialTheme.colors.background.copy(alpha = .3f))
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 modifier = Modifier
-                    .size(24.dp),
+                    .alpha(.4f)
+                    .size(16.dp),
                 painter = painterResource(id = R.drawable.ic_quest),
                 contentDescription = "quest"
             )
-            Text(text = "测试")
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = "测试",
+                style = MaterialTheme.typography.body2,
+                color = LocalContentColor.current.copy(.4f)
+            )
         }
 
         Row(
@@ -231,20 +204,18 @@ fun HomeTopAppBar(modifier: Modifier) {
                 .constrainAs(rightIcons) {
                     end.linkTo(parent.end)
                     centerVerticallyTo(centerQuery)
-                }) {
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 modifier = Modifier
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_quest),
+                    .alpha(.6f)
+                    .size(22.dp),
+                painter = painterResource(id = R.drawable.ic_book),
                 contentDescription = "quest"
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                modifier = Modifier
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_quest),
-                contentDescription = "quest"
-            )
+            RingingBell()
         }
 
     }
@@ -305,11 +276,67 @@ fun ShanBayTabIndicator(
                     .height(height)
                     .background(color = color)
             }
-//            .fillMaxWidth()
-//            .clip(RoundedCornerShape(height))
-//            .height(height)
-//            .background(color = color)
     )
+}
+
+@Composable
+fun RingingBell(
+    messages: List<String> = listOf("hello", "world", "I", "love", "you")
+) {
+
+    val transition = rememberInfiniteTransition()
+    val rotation by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 800
+                30f at 200
+                -30f at 600
+                0f at 800
+            },
+            repeatMode = RepeatMode.Restart
+        )
+    )
+    val scale by transition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 3600
+                1.2f at 1800
+            },
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Box {
+        Icon(
+            modifier = Modifier
+                .rotate(rotation)
+                .alpha(.6f)
+                .size(24.dp),
+            painter = painterResource(id = R.drawable.ic_bell),
+            contentDescription = "quest"
+        )
+        Surface(
+            modifier = Modifier
+                .size(16.dp)
+                .scale(scale)
+                .offset(10.dp, (-6).dp),
+            shape = RoundedCornerShape(16.dp),
+            color = DarkRed,
+            contentColor = Color.White
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+//                    fontSize = 9.sp,
+//                    fontWeight = FontWeight.Bold,
+                    text = "${messages.size}"
+                )
+            }
+        }
+    }
 }
 
 
@@ -321,4 +348,21 @@ fun PagerState.fixedTargetPage() = when {
     else -> ceil(currentPageOffset + currentPage).toInt()
         .coerceAtMost((pageCount - 1).coerceAtLeast(0))
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeAppBarPreView() {
+    Fake_shanBay_composeTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Column {
+                HomeTopAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, start = 12.dp, end = 12.dp)
+                )
+
+            }
+        }
+    }
 }
