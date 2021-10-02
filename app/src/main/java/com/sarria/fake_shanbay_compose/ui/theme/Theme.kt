@@ -13,29 +13,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-//private val DarkColorPalette = darkColors(
-//    primary = Purple200,
-//    primaryVariant = Purple700,
-//    secondary = Teal200,
-//    onSurface = Color.Red,
-//    background = Color.Red,
-//    onBackground = Color.Red,
-//)
 
 @SuppressLint("ConflictingOnColor")
 private val LightThemeColor = lightColors(
     primary = Color(0xFF39C8B0),
     surface = Color.White,
     onSurface = Color.Black,
-    background = Color.LightGray,
+    background = Color(0xFFF5F5F5),
 )
 
 @SuppressLint("ConflictingOnColor")
 private val DarkThemeColor = darkColors(
     primary = Color(0xFF1D917D),
-    surface = Color(0xFF111111),
+    surface = Color(0xFF070707),
     onSurface = Color.White,
-    background = Color.DarkGray,
+    background = Color(0xFF111111),
 )
 
 @Composable

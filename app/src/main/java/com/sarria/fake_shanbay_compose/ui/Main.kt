@@ -1,6 +1,7 @@
 package com.sarria.fake_shanbay_compose.ui
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -11,6 +12,7 @@ import com.sarria.fake_shanbay_compose.ui.home.Home
 import com.sarria.fake_shanbay_compose.ui.login.Login
 
 //主屏幕
+@ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
 fun Main() {

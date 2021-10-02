@@ -51,41 +51,36 @@ fun LoginContent(onLoginEnd: () -> Unit) {
         }
 
         LaunchedEffect(key1 = Unit) {
-            val animateSpec = tween<Float>(
+            val animateSpec2000 = tween<Float>(
                 durationMillis = 2000,
                 easing = FastOutLinearInEasing
             )
-            var sumDelay = 200L
-            val incrementDelay = 80L
+
+            val animateSpec1500 = tween<Float>(
+                durationMillis = 1500,
+                easing = FastOutLinearInEasing
+            )
+
             launch {
-                sumDelay += incrementDelay
-                delay(sumDelay)
-                loginAlphaState.appbarAlpha.animateTo(1f, animateSpec)
+                loginAlphaState.appbarAlpha.animateTo(1f, animateSpec2000)
             }
             launch {
-                sumDelay += incrementDelay
-                delay(sumDelay)
-                loginAlphaState.englishTextAlpha.animateTo(1f, animateSpec)
+                loginAlphaState.loginAlpha.animateTo(1f, animateSpec2000)
             }
             launch {
-                sumDelay += incrementDelay
-                delay(sumDelay)
-                loginAlphaState.chineseTextAlpha.animateTo(1f, animateSpec)
+                loginAlphaState.otherLoginAlpha.animateTo(1f, animateSpec2000)
             }
             launch {
-                sumDelay += incrementDelay
-                delay(sumDelay)
-                loginAlphaState.loginAlpha.animateTo(1f, animateSpec)
+                loginAlphaState.agreementAlpha.animateTo(1f, animateSpec2000)
+            }
+
+            launch {
+                delay(600)
+                loginAlphaState.englishTextAlpha.animateTo(1f, animateSpec1500)
             }
             launch {
-                sumDelay += incrementDelay
-                delay(sumDelay)
-                loginAlphaState.otherLoginAlpha.animateTo(1f, animateSpec)
-            }
-            launch {
-                sumDelay += incrementDelay
-                delay(sumDelay)
-                loginAlphaState.agreementAlpha.animateTo(1f, animateSpec)
+                delay(1200)
+                loginAlphaState.chineseTextAlpha.animateTo(1f, animateSpec1500)
             }
         }
 

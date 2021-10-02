@@ -1,9 +1,11 @@
 package com.sarria.fake_shanbay_compose.ui.home
 
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,10 +22,14 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -34,15 +40,18 @@ import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
 import com.sarria.fake_shanbay_compose.ui.commonLayout.TabPosition
+import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
 import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
 import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 
+@ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
 fun Home() {
@@ -60,12 +69,13 @@ fun Home() {
     }
 }
 
+@ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
 fun ScrollPage(modifier: Modifier) {
     Column(modifier = modifier) {
         val pages = remember {
-            listOf("推荐", "畅读会员", "赠礼盒", "短文", "经典", "小说", "人物", "科普", "生活")
+            listOf("推荐", "畅读会员", "短文", "经典", "小说", "人物", "科普", "生活")
         }
         val primaryColor = MaterialTheme.colors.primary
         val colors = remember {
@@ -76,7 +86,6 @@ fun ScrollPage(modifier: Modifier) {
                 Color.Cyan,
                 Color.Gray,
                 Color.Magenta,
-                Color.Black,
                 Color.Green,
                 primaryColor
             )
@@ -98,7 +107,7 @@ fun ScrollPage(modifier: Modifier) {
                     colors = colors
                 )
             },
-            divider = { Spacer(modifier = Modifier.height(8.dp)) }
+            divider = { Spacer(modifier = Modifier.height(2.dp)) }
         ) {
 
             pages.forEachIndexed { index, title ->
@@ -133,7 +142,10 @@ fun ScrollPage(modifier: Modifier) {
                 .fillMaxWidth()
         ) { page ->
             if (page == 0) {
-                RecommendPage(modifier = Modifier.fillMaxSize())
+                RecommendPage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Card(Modifier.padding(16.dp), elevation = 1.dp) {
@@ -152,6 +164,7 @@ fun ScrollPage(modifier: Modifier) {
 }
 
 
+@ExperimentalAnimationApi
 @Composable
 fun HomeTopAppBar(modifier: Modifier = Modifier) {
 
@@ -159,16 +172,29 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
 
     ConstraintLayout(modifier = modifier) {
         val (leftText, centerQuery, rightIcons) = createRefs()
-        Text(
+        Row(
             modifier = Modifier.constrainAs(leftText) {
                 start.linkTo(parent.start)
                 centerVerticallyTo(centerQuery)
 
             },
-            text = "工作党",
-            fontWeight = FontWeight(530),
-            color = LocalContentColor.current.copy(alpha = .5f)
-        )
+        ) {
+            Text(
+                text = "工作党",
+                fontWeight = FontWeight(530),
+                color = LocalContentColor.current.copy(alpha = .5f),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                modifier = Modifier
+                    .padding(bottom = 2.dp)
+                    .alpha(.5f)
+                    .size(8.dp)
+                    .align(Alignment.Bottom),
+                painter = painterResource(id = R.drawable.ic_expand_triangle),
+                contentDescription = "quest"
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -180,7 +206,7 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
                 }
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colors.background.copy(alpha = .3f))
+                .background(MaterialTheme.colors.background)
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -191,12 +217,17 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
                 painter = painterResource(id = R.drawable.ic_quest),
                 contentDescription = "quest"
             )
-            Text(
-                modifier = Modifier.padding(start = 8.dp),
-                text = "测试",
-                style = MaterialTheme.typography.body2,
-                color = LocalContentColor.current.copy(.4f)
+            VerticalScrollText(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp),
+                scrollList = listOf("考研", "大英百科", "听说读写全面提升"),
+                textStyle = MaterialTheme.typography.body2.copy(
+                    fontWeight = FontWeight(500),
+                    color = LocalContentColor.current.copy(.4f)
+                )
             )
+
         }
 
         Row(
@@ -303,8 +334,9 @@ fun RingingBell(
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = keyframes {
-                durationMillis = 3600
-                1.2f at 1800
+                durationMillis = 2400
+                1f at 0
+                1.5f at 1200
             },
             repeatMode = RepeatMode.Restart
         )
@@ -319,23 +351,28 @@ fun RingingBell(
             painter = painterResource(id = R.drawable.ic_bell),
             contentDescription = "quest"
         )
-        Surface(
+
+        Box(
             modifier = Modifier
-                .size(16.dp)
-                .scale(scale)
                 .offset(10.dp, (-6).dp),
-            shape = RoundedCornerShape(16.dp),
-            color = DarkRed,
-            contentColor = Color.White
+            contentAlignment = Alignment.Center
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-//                    fontSize = 9.sp,
-//                    fontWeight = FontWeight.Bold,
-                    text = "${messages.size}"
-                )
-            }
+            Box(
+                modifier = Modifier
+                    .scale(scale)
+                    .size(16.dp, 12.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(DarkRed),
+            )
+
+            Text(
+                color = Color.White,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                text = "16"
+            )
         }
+
     }
 }
 
@@ -350,6 +387,7 @@ fun PagerState.fixedTargetPage() = when {
 
 }
 
+@ExperimentalAnimationApi
 @Preview(showBackground = true)
 @Composable
 fun HomeAppBarPreView() {
