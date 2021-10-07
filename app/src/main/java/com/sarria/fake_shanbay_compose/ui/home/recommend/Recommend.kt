@@ -1,34 +1,34 @@
 package com.sarria.fake_shanbay_compose.ui.home.recommend
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.model.Article
+import com.sarria.fake_shanbay_compose.model.getArticle
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
-import com.sarria.fake_shanbay_compose.ui.home.HomeTopAppBar
-import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 
 @ExperimentalAnimationApi
@@ -49,21 +49,115 @@ fun RecommendPage(modifier: Modifier = Modifier) {
                 ClockOnCard(modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.height(24.dp))
                 TodayRow(modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+                ArticleCardItem(article = getArticle())
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
 
-//        items(6) {
-//            ArticleCardItem(listOf<Article>())
-//        }
-
     }
 }
 
-//@Composable
-//fun ArticleCardItem(listOf: Article) {
-//
-//}
+@Composable
+fun ArticleCardItem(modifier: Modifier = Modifier, article: Article) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        elevation = 0.dp,
+        backgroundColor = MaterialTheme.colors.background,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .heightIn(max = 170.dp)
+                    .fillMaxWidth()
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    painter = painterResource(id = article.imageSrc.toInt()),
+                    contentDescription = "image",
+                    contentScale = ContentScale.FillWidth
+                )
+
+                Row(
+                    modifier = Modifier
+                        .align(alignment = Alignment.BottomEnd)
+                        .clip(CircleShape)
+                        .background(
+                            color = Color.Black.copy(alpha = .3f)
+                        )
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CompositionLocalProvider(LocalContentColor provides Color.White) {
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            painter = painterResource(id = R.drawable.ic_read),
+                            contentDescription = "reds"
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "${article.totalReads}万",
+                            fontSize = 9.sp
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+            ) {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.primary) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(id = R.drawable.ic_book),
+                            contentDescription = "book"
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = article.type,fontSize = 13.sp)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = article.englishTitle,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight(1000),
+                    lineHeight = 36.sp
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = article.chineseIntroduction,
+                    fontSize = 12.sp,
+                    color = LocalContentColor.current.copy(alpha = .6f)
+                )
+            }
+
+        }
+    }
+}
+
 
 //打卡行
 @Composable
@@ -165,7 +259,7 @@ fun TodayRow(modifier: Modifier = Modifier) {
             )
         }
 
-        CompositionLocalProvider(LocalContentAlpha provides .45f) {
+        CompositionLocalProvider(LocalContentAlpha provides .5f) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "全部",
@@ -202,6 +296,21 @@ fun TodayRowPreView() {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column {
                 TodayRow(Modifier.fillMaxWidth())
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ArticleCardPreview() {
+    Fake_shanBay_composeTheme {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Column {
+                ArticleCardItem(modifier = Modifier.padding(12.dp), article = getArticle())
             }
         }
     }
