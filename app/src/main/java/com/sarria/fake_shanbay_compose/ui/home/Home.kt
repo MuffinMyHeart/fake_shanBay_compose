@@ -28,22 +28,27 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
 import com.sarria.fake_shanbay_compose.ui.commonLayout.TabPosition
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
 import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
 import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
+import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -55,7 +60,7 @@ import kotlin.math.max
 @ExperimentalPagerApi
 @Composable
 fun Home() {
-    Surface(modifier = Modifier.fillMaxSize()) {
+    BackgroundSurface(modifier = Modifier.fillMaxSize()) {
         Column {
             HomeTopAppBar(
                 modifier = Modifier
@@ -64,7 +69,13 @@ fun Home() {
                     .padding(top = 12.dp, start = 12.dp, end = 12.dp)
             )
 
-            ScrollPage(Modifier.fillMaxSize())
+            ScrollPage(
+                Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+                    .padding(bottom = 12.dp)
+                    .clip(RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp))
+            )
         }
     }
 }
@@ -95,7 +106,7 @@ fun ScrollPage(modifier: Modifier) {
 
 
         ScrollableTabRow(
-            backgroundColor = MaterialTheme.colors.surface,
+            backgroundColor = MaterialTheme.colors.background,
             selectedTabIndex = pagerState.currentPage,
             edgePadding = 0.dp,
             indicator = { tabPositions ->
@@ -119,16 +130,36 @@ fun ScrollPage(modifier: Modifier) {
                     selectedContentColor = LocalContentColor.current.copy(.73f),
                     unselectedContentColor = LocalContentColor.current.copy(ContentAlpha.disabled)
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .clickable {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
+
+                    if (title == "畅读会员") {
+                        Text(
+                            modifier = Modifier
+                                .clickable {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(index)
+                                    }
                                 }
-                            }
-                            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
-                        text = title,
-                        style = LocalTextStyle.current.copy(fontWeight = FontWeight(530)))
+                                .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
+                            text = title,
+                            fontFamily = FontFamily.Monospace,
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight(1000),
+                            color = Color(0xFFD8A878),
+                            style = LocalTextStyle.current.copy(fontWeight = FontWeight(530))
+                        )
+                    } else {
+                        Text(
+                            modifier = Modifier
+                                .clickable {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(index)
+                                    }
+                                }
+                                .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
+                            text = title,
+                            style = LocalTextStyle.current.copy(fontWeight = FontWeight(530))
+                        )
+                    }
                 }
 
             }
@@ -206,7 +237,7 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
                 }
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colors.background)
+                .background(MaterialTheme.colors.surface.copy(LowAlpha))
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -288,7 +319,7 @@ fun ShanBayTabIndicator(
                         fraction
                     )
 
-                    println("targetDistance： $targetDistance , fraction: $fraction , currentPage:${pagerState.currentPage},currentOffSet: ${pagerState.currentPageOffset}  , targetPage: $targetPage")
+//                    println("targetDistance： $targetDistance , fraction: $fraction , currentPage:${pagerState.currentPage},currentOffSet: ${pagerState.currentPageOffset}  , targetPage: $targetPage")
 
                     color = lerp(currentColor, targetColor, fraction)
 

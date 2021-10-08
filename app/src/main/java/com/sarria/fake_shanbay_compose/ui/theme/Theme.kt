@@ -16,18 +16,22 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @SuppressLint("ConflictingOnColor")
 private val LightThemeColor = lightColors(
-    primary = Color(0xFF39C8B0),
-    surface = Color.White,
+    primary = Color(0xFF90C060),
+    onPrimary = Color.White,
+    surface = Color(0xFFF0F0F0),
     onSurface = Color.Black,
-    background = Color(0xFFF5F5F5),
+    background = Color.White,
+    onBackground = Color.Black
 )
 
 @SuppressLint("ConflictingOnColor")
 private val DarkThemeColor = darkColors(
-    primary = Color(0xFF1D917D),
-    surface = Color(0xFF070707),
-    onSurface = Color.White,
-    background = Color(0xFF111111),
+    primary = Color(0xFF57703A),
+    onPrimary = Color.White,
+    surface = Color.Black,
+    onSurface = Color(0xFFA0A0A0),
+    background = Color(0xFF202020),
+    onBackground = Color(0xFFA0A0A0)
 )
 
 @Composable

@@ -1,10 +1,11 @@
 package com.sarria.fake_shanbay_compose.ui.home.recommend
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,25 +16,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sarria.fake_shanbay_compose.R
-import com.sarria.fake_shanbay_compose.model.Article
 import com.sarria.fake_shanbay_compose.model.getArticle
+import com.sarria.fake_shanbay_compose.model.getArticles
+import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCard
+import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCardWithBigImage
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
+import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 
 @ExperimentalAnimationApi
 @Composable
-fun RecommendPage(modifier: Modifier = Modifier) {
+fun RecommendPage(
+    modifier: Modifier = Modifier
+) {
     val state = rememberLazyListState()
     LazyColumn(
         modifier = modifier,
@@ -53,107 +57,25 @@ fun RecommendPage(modifier: Modifier = Modifier) {
             }
         }
 
-        item {
+        itemsIndexed(getArticles()) { index, item ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)
             ) {
-                ArticleCardItem(article = getArticle())
+                if (index == 0) {
+                    ArticleCardWithBigImage(
+                        modifier = Modifier.fillMaxWidth(),
+                        article = item
+                    )
+                } else {
+                    ArticleCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        article = item
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
             }
-        }
-
-    }
-}
-
-@Composable
-fun ArticleCardItem(modifier: Modifier = Modifier, article: Article) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        elevation = 0.dp,
-        backgroundColor = MaterialTheme.colors.background,
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .heightIn(max = 170.dp)
-                    .fillMaxWidth()
-            ) {
-                Image(
-                    modifier = Modifier.fillMaxWidth(),
-                    painter = painterResource(id = article.imageSrc.toInt()),
-                    contentDescription = "image",
-                    contentScale = ContentScale.FillWidth
-                )
-
-                Row(
-                    modifier = Modifier
-                        .align(alignment = Alignment.BottomEnd)
-                        .clip(CircleShape)
-                        .background(
-                            color = Color.Black.copy(alpha = .3f)
-                        )
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CompositionLocalProvider(LocalContentColor provides Color.White) {
-                        Icon(
-                            modifier = Modifier.size(12.dp),
-                            painter = painterResource(id = R.drawable.ic_read),
-                            contentDescription = "reds"
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${article.totalReads}万",
-                            fontSize = 9.sp
-                        )
-                    }
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-            ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.primary) {
-                        Icon(
-                            modifier = Modifier.size(16.dp),
-                            painter = painterResource(id = R.drawable.ic_book),
-                            contentDescription = "book"
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = article.type,fontSize = 13.sp)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = article.englishTitle,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight(1000),
-                    lineHeight = 36.sp
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = article.chineseIntroduction,
-                    fontSize = 12.sp,
-                    color = LocalContentColor.current.copy(alpha = .6f)
-                )
-            }
-
         }
     }
 }
@@ -168,7 +90,7 @@ fun ClockOnCard(modifier: Modifier) {
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colors.background)
+            .background(MaterialTheme.colors.surface.copy(if (isSystemInDarkTheme()) 1f else LowAlpha))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -217,19 +139,71 @@ fun ClockOnCard(modifier: Modifier) {
                 )
 
 
-                Text(
-                    text = "66737人参与挑战",
-                    fontSize = 9.sp,
-                    color = LocalContentColor.current.copy(alpha = .4f)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .border(.5.dp, Color.White, CircleShape)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.mipmap.heads1),
+                                contentDescription = "heads"
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .border(.5.dp, Color.White, CircleShape)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.mipmap.heads2),
+                                contentDescription = "heads"
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .border(.5.dp, Color.White, CircleShape)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.mipmap.heads3),
+                                contentDescription = "heads"
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "66737人参与挑战 >",
+                        fontSize = 9.sp,
+                        color = LocalContentColor.current.copy(alpha = .4f)
+                    )
+                }
             }
         }
-        Button(
-            contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
-            onClick = { },
-            shape = RoundedCornerShape(24.dp)
+
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(MaterialTheme.colors.primary)
+                .padding(horizontal = 20.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Text(text = "打卡")
+            Text(
+                text = "打卡",
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 12.sp,
+                color = MaterialTheme.colors.surface
+            )
         }
 
     }
@@ -237,7 +211,9 @@ fun ClockOnCard(modifier: Modifier) {
 
 @ExperimentalAnimationApi
 @Composable
-fun TodayRow(modifier: Modifier = Modifier) {
+fun TodayRow(
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -253,8 +229,9 @@ fun TodayRow(modifier: Modifier = Modifier) {
             VerticalScrollText(
                 scrollList = listOf("中国立场，全球视野", "每晚 7:00 准时更新"),
                 textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp,
-                    color = LocalContentColor.current.copy(.3f)
+                    fontSize = 13.sp,
+                    color = LocalContentColor.current.copy(.3f),
+                    fontWeight = FontWeight.ExtraBold
                 )
             )
         }
@@ -272,7 +249,6 @@ fun TodayRow(modifier: Modifier = Modifier) {
                 )
             }
         }
-
     }
 }
 
@@ -301,18 +277,4 @@ fun TodayRowPreView() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ArticleCardPreview() {
-    Fake_shanBay_composeTheme {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Column {
-                ArticleCardItem(modifier = Modifier.padding(12.dp), article = getArticle())
-            }
-        }
-    }
-}
 

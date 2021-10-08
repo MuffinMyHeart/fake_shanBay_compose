@@ -21,6 +21,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.sarria.fake_shanbay_compose.ui.Main
+import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.home.Home
 import com.sarria.fake_shanbay_compose.ui.login.Login
 import com.sarria.fake_shanbay_compose.ui.splash.Splash
@@ -71,7 +72,7 @@ fun ShanBayApp() {
 //            Home()
 //        }
 //    }
-    Surface(modifier = Modifier.fillMaxSize()) {
+    BackgroundSurface(modifier = Modifier.fillMaxSize()) {
         Crossfade(targetState = splashed) {
             if (it){
                 Main()

@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.accompanist.insets.systemBarsPadding
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
+import com.sarria.fake_shanbay_compose.ui.theme.LogoColor
 import com.sarria.fake_shanbay_compose.ui.theme.VioletDark
 import com.sarria.fake_shanbay_compose.utils.rememberVideoViewWithLifecycle
 import kotlinx.coroutines.delay
@@ -30,7 +32,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Login(onLoginEnd: () -> Unit = {}) {
-    Surface(
+    BackgroundSurface(
         modifier = Modifier.fillMaxSize()
     ) {
         LoginContent(onLoginEnd)
@@ -196,6 +198,10 @@ fun LoginRow(modifier: Modifier, onLoginEnd: () -> Unit) {
     ) {
         Button(
             modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = LogoColor,
+                contentColor = Color.White
+            ),
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = RoundedCornerShape(64.dp),
             onClick = { onLoginEnd() }) {
