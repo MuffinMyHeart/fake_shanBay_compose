@@ -137,8 +137,7 @@ fun ClockOnCard(modifier: Modifier) {
                     fontWeight = FontWeight.Bold,
                     color = LocalContentColor.current.copy(alpha = .7f)
                 )
-
-
+                Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -276,5 +275,18 @@ fun TodayRowPreView() {
         }
     }
 }
+
+@ExperimentalAnimationApi
+@Preview(showBackground = true)
+@Composable
+fun RecommendPreview() {
+    Fake_shanBay_composeTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            RecommendPage()
+        }
+    }
+}
+
+
 
 

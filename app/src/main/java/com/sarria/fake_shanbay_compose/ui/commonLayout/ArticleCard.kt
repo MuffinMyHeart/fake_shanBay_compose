@@ -190,7 +190,7 @@ fun ArticleCard(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(32.dp))
 
                 Box(
                     modifier = Modifier
