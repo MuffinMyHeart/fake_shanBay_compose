@@ -74,7 +74,7 @@ fun Home() {
                     .fillMaxSize()
                     .navigationBarsPadding()
                     .padding(bottom = 12.dp)
-                    .clip(RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp))
+                    .clip(RoundedCornerShape(0.dp, 0.dp, 24.dp, 24.dp))
             )
         }
     }
