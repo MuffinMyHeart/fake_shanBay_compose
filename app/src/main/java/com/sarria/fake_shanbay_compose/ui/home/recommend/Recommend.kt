@@ -1,10 +1,12 @@
 package com.sarria.fake_shanbay_compose.ui.home.recommend
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -24,9 +26,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarria.fake_shanbay_compose.R
-import com.sarria.fake_shanbay_compose.model.getArticle
-import com.sarria.fake_shanbay_compose.model.getArticles
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCard
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCardWithBigImage
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
@@ -39,6 +40,9 @@ fun RecommendPage(
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyListState()
+    val recommendViewModel: RecommendViewModel = hiltViewModel()
+    val articles = recommendViewModel.state.value.articles
+    val isLoading = recommendViewModel.state.value.isLoading
     LazyColumn(
         modifier = modifier,
         state = state,
@@ -57,24 +61,30 @@ fun RecommendPage(
             }
         }
 
-        itemsIndexed(getArticles()) { index, item ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-            ) {
-                if (index == 0) {
-                    ArticleCardWithBigImage(
-                        modifier = Modifier.fillMaxWidth(),
-                        article = item
-                    )
-                } else {
-                    ArticleCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        article = item
-                    )
+        if (articles.isNullOrEmpty() || isLoading) {
+            item {
+                CircularProgressIndicator()
+            }
+        } else {
+            itemsIndexed(articles) { index, item ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
+                    if (index == 0) {
+                        ArticleCardWithBigImage(
+                            modifier = Modifier.fillMaxWidth(),
+                            article = item
+                        )
+                    } else {
+                        ArticleCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            article = item
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -137,7 +147,7 @@ fun ClockOnCard(modifier: Modifier) {
                     fontWeight = FontWeight.Bold,
                     color = LocalContentColor.current.copy(alpha = .7f)
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {

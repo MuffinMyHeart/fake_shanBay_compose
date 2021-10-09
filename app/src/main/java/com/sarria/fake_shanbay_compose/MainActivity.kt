@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,13 +21,14 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.sarria.fake_shanbay_compose.ui.Main
 import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
-import com.sarria.fake_shanbay_compose.ui.home.Home
-import com.sarria.fake_shanbay_compose.ui.login.Login
 import com.sarria.fake_shanbay_compose.ui.splash.Splash
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 
 val Context.datastore :DataStore<Preferences> by preferencesDataStore(name = "login")
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @ExperimentalPagerApi

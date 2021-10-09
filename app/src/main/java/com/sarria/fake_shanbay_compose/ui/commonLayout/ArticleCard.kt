@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.sarria.fake_shanbay_compose.R
-import com.sarria.fake_shanbay_compose.model.Article
-import com.sarria.fake_shanbay_compose.model.getArticle
+import com.sarria.fake_shanbay_compose.data.Article
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 
@@ -30,6 +30,7 @@ fun ArticleCardWithBigImage(
     modifier: Modifier = Modifier,
     article: Article
 ) {
+    val painter = rememberImagePainter(data = article.imageUrl)
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
@@ -47,7 +48,7 @@ fun ArticleCardWithBigImage(
             ) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
-                    painter = painterResource(id = article.imageUrl.toInt()),
+                    painter = painter,
                     contentDescription = "image",
                     contentScale = ContentScale.FillWidth
                 )
@@ -136,6 +137,7 @@ fun ArticleCard(
     modifier: Modifier = Modifier,
     article: Article
 ) {
+    val painter = rememberImagePainter(data = article.imageUrl)
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
@@ -145,7 +147,9 @@ fun ArticleCard(
     ) {
 
         Column(
-            modifier = Modifier.fillMaxWidth().padding(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         ) {
 
             Row(
@@ -199,7 +203,7 @@ fun ArticleCard(
                 ) {
                     Image(
                         modifier = Modifier.fillMaxWidth(),
-                        painter = painterResource(id = article.imageUrl.toInt()),
+                        painter = painter,
                         contentDescription = "image",
                         contentScale = ContentScale.Crop
                     )
@@ -336,9 +340,9 @@ fun ArticleCardPreview() {
                 .fillMaxSize()
         ) {
             Column {
-                ArticleCardWithBigImage(modifier = Modifier.padding(12.dp), article = getArticle())
+//                ArticleCardWithBigImage(modifier = Modifier.padding(12.dp), article = getArticle())
                 Spacer(modifier = Modifier.height(12.dp))
-                ArticleCard(modifier = Modifier.padding(12.dp), article = getArticle())
+//                ArticleCard(modifier = Modifier.padding(12.dp), article = getArticle())
             }
         }
     }
