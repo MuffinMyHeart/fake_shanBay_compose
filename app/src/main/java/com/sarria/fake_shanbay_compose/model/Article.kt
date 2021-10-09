@@ -3,7 +3,7 @@ package com.sarria.fake_shanbay_compose.model
 import com.sarria.fake_shanbay_compose.R
 
 data class Article(
-    val imageSrc: String,
+    val imageUrl: String,
     val totalReads: Float,
     val type: String,
     val englishTitle: String,
@@ -16,7 +16,7 @@ data class Article(
 
 fun getArticle(): Article {
     return Article(
-        imageSrc = R.mipmap.image1.toString(),
+        imageUrl = R.mipmap.image1.toString(),
         totalReads = 256.3f,
         type = "商业",
         englishTitle = "Jetpack Compose The New Generation Of Android UI Kit",
@@ -28,7 +28,7 @@ fun getArticle(): Article {
     )
 }
 
-val imageSrc = listOf(
+val imageUrl = listOf(
     R.mipmap.image1.toString(),
     R.mipmap.image2.toString(),
     R.mipmap.image3.toString(),
@@ -67,7 +67,7 @@ fun getArticles(): List<Article> {
     repeat(5) {
         list.add(
             Article(
-                imageSrc = imageSrc[it],
+                imageUrl = imageUrl[it],
                 totalReads = totalReads[it],
                 type = type[it],
                 englishTitle = englishTitle[it],

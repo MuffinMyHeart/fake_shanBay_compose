@@ -47,7 +47,7 @@ fun ArticleCardWithBigImage(
             ) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
-                    painter = painterResource(id = article.imageSrc.toInt()),
+                    painter = painterResource(id = article.imageUrl.toInt()),
                     contentDescription = "image",
                     contentScale = ContentScale.FillWidth
                 )
@@ -199,7 +199,7 @@ fun ArticleCard(
                 ) {
                     Image(
                         modifier = Modifier.fillMaxWidth(),
-                        painter = painterResource(id = article.imageSrc.toInt()),
+                        painter = painterResource(id = article.imageUrl.toInt()),
                         contentDescription = "image",
                         contentScale = ContentScale.Crop
                     )
