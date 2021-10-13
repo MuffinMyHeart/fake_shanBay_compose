@@ -5,14 +5,10 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -22,24 +18,15 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.layout.FirstBaseline
-import androidx.compose.ui.layout.LastBaseline
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.*
-import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
@@ -49,7 +36,6 @@ import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
 import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
@@ -199,17 +185,11 @@ fun ScrollPage(modifier: Modifier) {
 @Composable
 fun HomeTopAppBar(modifier: Modifier = Modifier) {
 
-    //这边要用constrain layout 因为需要将搜索栏固定到中心位置但是目前row没有给我们提供这个选项
-
-    ConstraintLayout(modifier = modifier) {
-        val (leftText, centerQuery, rightIcons) = createRefs()
-        Row(
-            modifier = Modifier.constrainAs(leftText) {
-                start.linkTo(parent.start)
-                centerVerticallyTo(centerQuery)
-
-            },
-        ) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row {
             Text(
                 text = "工作党",
                 fontWeight = FontWeight(530),
@@ -226,15 +206,10 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
                 contentDescription = "quest"
             )
         }
-
+        Spacer(modifier = Modifier.width(8.dp))
         Row(
             modifier = Modifier
-                .constrainAs(centerQuery) {
-                    start.linkTo(leftText.end, margin = 8.dp)
-                    end.linkTo(rightIcons.start, margin = 16.dp)
-                    top.linkTo(parent.top)
-                    width = Dimension.fillToConstraints
-                }
+                .weight(1f)
                 .size(240.dp, 32.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .background(MaterialTheme.colors.surface.copy(LowAlpha))
@@ -258,15 +233,9 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
                     color = LocalContentColor.current.copy(.4f)
                 )
             )
-
         }
-
+        Spacer(modifier = Modifier.width(16.dp))
         Row(
-            modifier = Modifier
-                .constrainAs(rightIcons) {
-                    end.linkTo(parent.end)
-                    centerVerticallyTo(centerQuery)
-                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -430,7 +399,6 @@ fun HomeAppBarPreView() {
                         .fillMaxWidth()
                         .padding(top = 12.dp, start = 12.dp, end = 12.dp)
                 )
-
             }
         }
     }

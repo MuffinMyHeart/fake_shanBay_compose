@@ -19,12 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.data.Article
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 
+@ExperimentalCoilApi
 @Composable
 fun ArticleCardWithBigImage(
     modifier: Modifier = Modifier,
@@ -132,6 +134,7 @@ fun ArticleCardWithBigImage(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun ArticleCard(
     modifier: Modifier = Modifier,

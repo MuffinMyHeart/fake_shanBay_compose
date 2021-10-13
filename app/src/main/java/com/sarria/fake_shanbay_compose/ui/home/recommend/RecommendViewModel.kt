@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.sarria.fake_shanbay_compose.data.Article
 import com.sarria.fake_shanbay_compose.data.ShanBayApi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +28,7 @@ class RecommendViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = state.value.copy(isLoading = true)
             try {
+                delay(2000)
                 _state.value = state.value.copy(articles = api.getArticles())
                 _state.value = state.value.copy(isLoading = false)
             } catch (e: Exception) {

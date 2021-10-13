@@ -63,10 +63,17 @@ fun RecommendPage(
 
         if (articles.isNullOrEmpty() || isLoading) {
             item {
-                CircularProgressIndicator()
+                Box(
+                    modifier = Modifier.fillParentMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         } else {
-            itemsIndexed(articles) { index, item ->
+            itemsIndexed(articles, key = { _, item ->
+                item.englishTitle
+            }) { index, item ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
