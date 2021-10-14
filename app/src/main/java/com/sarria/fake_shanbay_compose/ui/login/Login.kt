@@ -77,6 +77,7 @@ fun LoginContent(onLoginEnd: () -> Unit) {
                 }
             }
 
+
             launch {
                 delay(600)
                 loginAlphaState.englishTextAlpha.animateTo(1f, animateSpec1500)

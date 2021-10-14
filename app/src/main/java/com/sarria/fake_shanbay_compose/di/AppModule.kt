@@ -1,6 +1,6 @@
 package com.sarria.fake_shanbay_compose.di
 
-import com.sarria.fake_shanbay_compose.data.ShanBayApi
+import com.sarria.fake_shanbay_compose.data.net.ShanBayApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

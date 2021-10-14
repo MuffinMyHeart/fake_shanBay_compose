@@ -1,5 +1,6 @@
-package com.sarria.fake_shanbay_compose.data
+package com.sarria.fake_shanbay_compose.data.net
 
+import com.sarria.fake_shanbay_compose.data.model.Article
 import retrofit2.http.GET
 import retrofit2.http.Path
 

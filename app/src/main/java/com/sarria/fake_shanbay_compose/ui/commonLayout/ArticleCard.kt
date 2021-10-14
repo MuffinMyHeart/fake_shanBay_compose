@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.sarria.fake_shanbay_compose.R
-import com.sarria.fake_shanbay_compose.data.Article
+import com.sarria.fake_shanbay_compose.data.model.Article
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 

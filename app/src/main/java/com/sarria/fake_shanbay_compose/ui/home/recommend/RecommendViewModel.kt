@@ -5,8 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sarria.fake_shanbay_compose.data.Article
-import com.sarria.fake_shanbay_compose.data.ShanBayApi
+import com.sarria.fake_shanbay_compose.data.model.Article
+import com.sarria.fake_shanbay_compose.data.net.ShanBayApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

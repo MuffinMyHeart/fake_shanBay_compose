@@ -1,4 +1,4 @@
-package com.sarria.fake_shanbay_compose.data
+package com.sarria.fake_shanbay_compose.data.model
 
 import com.sarria.fake_shanbay_compose.R
 
