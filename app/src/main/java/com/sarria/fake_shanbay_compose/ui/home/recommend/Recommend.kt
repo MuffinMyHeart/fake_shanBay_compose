@@ -27,9 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCard
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCardWithBigImage
+import com.sarria.fake_shanbay_compose.ui.commonLayout.ShanBaySwipeRefreshIndicator
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
@@ -39,58 +42,73 @@ import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 fun RecommendPage(
     modifier: Modifier = Modifier
 ) {
-    val state = rememberLazyListState()
+
     val recommendViewModel: RecommendViewModel = hiltViewModel()
     val articles = recommendViewModel.state.value.articles
     val isLoading = recommendViewModel.state.value.isLoading
-    LazyColumn(
-        modifier = modifier,
-        state = state,
+    val swipeState = rememberSwipeRefreshState(isRefreshing = isLoading)
+    SwipeRefresh(
+        state = swipeState,
+        onRefresh = { recommendViewModel.getArticles() },
+        indicator = { s, trigger ->
+            ShanBaySwipeRefreshIndicator(
+                state = s,
+                refreshTriggerDistance = trigger,
+                refreshingOffset = 32.dp
+            )
+        },
+        refreshTriggerDistance = 100.dp
     ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
-                ClockOnCard(modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.height(24.dp))
-                TodayRow(modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        }
-
-        if (articles.isNullOrEmpty() || isLoading) {
+        val listState = rememberLazyListState()
+        LazyColumn(
+            modifier = modifier,
+            state = listState,
+        ) {
             item {
-                Box(
-                    modifier = Modifier.fillParentMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-        } else {
-            itemsIndexed(articles, key = { _, item ->
-                item.englishTitle
-            }) { index, item ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 12.dp),
                 ) {
-                    if (index == 0) {
-                        ArticleCardWithBigImage(
-                            modifier = Modifier.fillMaxWidth(),
-                            article = item
-                        )
-                    } else {
-                        ArticleCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            article = item
-                        )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ClockOnCard(modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(24.dp))
+                    TodayRow(modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
+
+            if (articles.isNullOrEmpty() || isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            } else {
+                itemsIndexed(articles, key = { _, item ->
+                    item.englishTitle
+                }) { index, item ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        if (index == 0) {
+                            ArticleCardWithBigImage(
+                                modifier = Modifier.fillMaxWidth(),
+                                article = item
+                            )
+                        } else {
+                            ArticleCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                article = item
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }

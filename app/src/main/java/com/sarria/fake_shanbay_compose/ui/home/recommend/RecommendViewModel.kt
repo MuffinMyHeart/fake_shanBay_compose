@@ -27,12 +27,12 @@ class RecommendViewModel @Inject constructor(
     fun getArticles() {
         viewModelScope.launch {
             _state.value = state.value.copy(isLoading = true)
+            delay(1000)
             try {
-                delay(2000)
                 _state.value = state.value.copy(articles = api.getArticles())
-                _state.value = state.value.copy(isLoading = false)
             } catch (e: Exception) {
                 Log.e("recommendViewModel", "getArticles: $e")
+            } finally {
                 _state.value = state.value.copy(isLoading = false)
             }
         }

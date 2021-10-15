@@ -270,10 +270,10 @@ fun ArticleCardItemBottom(
                     .border(
                         BorderStroke(
                             1.dp,
-                            LocalContentColor.current.copy(alpha = .1f)
+                            LocalContentColor.current.copy(alpha = .2f)
                         ), CircleShape
                     )
-                    .padding(start = 8.dp, end = 4.dp, top = 2.dp, bottom = 2.dp),
+                    .padding(start = 8.dp, end = 4.dp, top = 2.dp, bottom = 1.dp),
                 text = level,
                 color = LocalContentColor.current.copy(alpha = .6f),
                 fontSize = 12.sp,

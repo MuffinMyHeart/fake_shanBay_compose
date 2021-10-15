@@ -78,12 +78,12 @@ fun ScrollPage(modifier: Modifier) {
         val colors = remember {
             listOf(
                 primaryColor,
-                Color.Blue,
-                Color.Red,
-                Color.Cyan,
-                Color.Gray,
-                Color.Magenta,
-                Color.Green,
+                Color(0xFFD8A878),
+                primaryColor,
+                primaryColor,
+                primaryColor,
+                primaryColor,
+                primaryColor,
                 primaryColor
             )
         }
