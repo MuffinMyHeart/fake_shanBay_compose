@@ -15,7 +15,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //滚动图标
-@ExperimentalAnimationApi
 @Composable
 fun VerticalScrollText(
     modifier: Modifier = Modifier,
@@ -26,7 +25,6 @@ fun VerticalScrollText(
     var text by remember {
         mutableStateOf(scrollList[0])
     }
-
 
     LaunchedEffect(key1 = Unit) {
         launch {

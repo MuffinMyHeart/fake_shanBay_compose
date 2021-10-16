@@ -37,7 +37,6 @@ import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 
-@ExperimentalAnimationApi
 @Composable
 fun RecommendPage(
     modifier: Modifier = Modifier
@@ -243,7 +242,6 @@ fun ClockOnCard(modifier: Modifier) {
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 fun TodayRow(
     modifier: Modifier = Modifier
@@ -298,7 +296,6 @@ fun HomeAppBarPreView() {
     }
 }
 
-@ExperimentalAnimationApi
 @Preview(showBackground = true)
 @Composable
 fun TodayRowPreView() {
@@ -311,7 +308,6 @@ fun TodayRowPreView() {
     }
 }
 
-@ExperimentalAnimationApi
 @Preview(showBackground = true)
 @Composable
 fun RecommendPreview() {

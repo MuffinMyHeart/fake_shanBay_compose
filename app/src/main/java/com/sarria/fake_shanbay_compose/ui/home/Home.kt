@@ -42,8 +42,6 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 
-@ExperimentalAnimationApi
-@ExperimentalPagerApi
 @Composable
 fun Home() {
     BackgroundSurface(modifier = Modifier.fillMaxSize()) {
@@ -66,8 +64,6 @@ fun Home() {
     }
 }
 
-@ExperimentalAnimationApi
-@ExperimentalPagerApi
 @Composable
 fun ScrollPage(modifier: Modifier) {
     Column(modifier = modifier) {
@@ -181,7 +177,6 @@ fun ScrollPage(modifier: Modifier) {
 }
 
 
-@ExperimentalAnimationApi
 @Composable
 fun HomeTopAppBar(modifier: Modifier = Modifier) {
 
@@ -253,7 +248,6 @@ fun HomeTopAppBar(modifier: Modifier = Modifier) {
 
 }
 
-@ExperimentalPagerApi
 @Composable
 fun ShanBayTabIndicator(
     pagerState: PagerState,
@@ -377,7 +371,6 @@ fun RingingBell(
 }
 
 
-@ExperimentalPagerApi
 fun PagerState.fixedTargetPage() = when {
     !isScrollInProgress -> currentPage
     currentPageOffset.absoluteValue < 0.001f -> currentPage
@@ -387,7 +380,6 @@ fun PagerState.fixedTargetPage() = when {
 
 }
 
-@ExperimentalAnimationApi
 @Preview(showBackground = true)
 @Composable
 fun HomeAppBarPreView() {

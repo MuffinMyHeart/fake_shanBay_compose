@@ -12,8 +12,6 @@ import com.sarria.fake_shanbay_compose.ui.home.Home
 import com.sarria.fake_shanbay_compose.ui.login.Login
 
 //主屏幕
-@ExperimentalAnimationApi
-@ExperimentalPagerApi
 @Composable
 fun Main() {
     var login by rememberSaveable {
