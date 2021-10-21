@@ -19,8 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.data.model.Article
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
@@ -31,7 +29,6 @@ fun ArticleCardWithBigImage(
     modifier: Modifier = Modifier,
     article: Article
 ) {
-    val painter = rememberImagePainter(data = article.imageUrl)
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
@@ -49,7 +46,7 @@ fun ArticleCardWithBigImage(
             ) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
-                    painter = painter,
+                    bitmap = article.imageBitmap!!,
                     contentDescription = "image",
                     contentScale = ContentScale.FillWidth
                 )
@@ -138,7 +135,6 @@ fun ArticleCard(
     modifier: Modifier = Modifier,
     article: Article
 ) {
-    val painter = rememberImagePainter(data = article.imageUrl)
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
@@ -204,7 +200,7 @@ fun ArticleCard(
                 ) {
                     Image(
                         modifier = Modifier.fillMaxWidth(),
-                        painter = painter,
+                        bitmap = article.imageBitmap!!,
                         contentDescription = "image",
                         contentScale = ContentScale.Crop
                     )

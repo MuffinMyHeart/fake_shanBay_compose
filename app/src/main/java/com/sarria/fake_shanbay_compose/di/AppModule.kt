@@ -1,14 +1,12 @@
 package com.sarria.fake_shanbay_compose.di
 
 import android.app.Application
-import coil.Coil
 import coil.ImageLoader
-import coil.util.CoilUtils
+import com.sarria.fake_shanbay_compose.data.RecommendRepository
 import com.sarria.fake_shanbay_compose.data.net.ShanBayApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -31,6 +29,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesCoil(@ApplicationContext applicationContext: Application): ImageLoader =
+    fun providesCoil(applicationContext: Application): ImageLoader =
         ImageLoader.Builder(applicationContext).build()
+
+    @Provides
+    @Singleton
+    fun providesRecommendRepository(
+        shanBayApi: ShanBayApi,
+        imageLoader: ImageLoader,
+        applicationContext: Application
+    ): RecommendRepository =
+        RecommendRepository(shanBayApi, imageLoader, applicationContext)
 }

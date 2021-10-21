@@ -1,40 +1,55 @@
 package com.sarria.fake_shanbay_compose.data
 
 import android.app.Application
-import android.widget.ImageView
-import androidx.core.widget.ImageViewCompat
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
-import coil.load
 import coil.request.ImageRequest
+import com.sarria.fake_shanbay_compose.data.model.Article
+import com.sarria.fake_shanbay_compose.data.model.ClockOnCardInfo
 import com.sarria.fake_shanbay_compose.data.net.ShanBayApi
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlinx.coroutines.flow.*
 
-@Singleton
-class RecommendRepository @Inject constructor(
+class RecommendRepository(
     private val shanBayApi: ShanBayApi,
     private val imageLoader: ImageLoader,
-    @ApplicationContext private val applicationContext: Application
+    private val applicationContext: Application
 ) {
 
-    fun getArticleByUserId(userId: String) = flow {
-        val articles = shanBayApi.getArticles(userId = userId)
-        emit(articles)
+    fun getArticles(userId: String): Flow<Article> = flow {
+        val articles = shanBayApi.getArticles(userId = userId, nums = 20)
+        articles.forEach {
+            emit(it)
+        }
+    }.flatMapMerge {
+        flow {
+            it.imageBitmap = getImage(it.imageUrl)
+            emit(it)
+        }
+    }.filter { it.imageBitmap != null }
+
+    fun getClockOnCardInfo(userId: String): Flow<ClockOnCardInfo> = flow {
+        val clockOnCardInfo = shanBayApi.getClockOnCardInfo(userId = userId)
+        val urls = clockOnCardInfo.headerUrls.asFlow()
+            .flatMapMerge {
+                flow {
+                    emit(getImage(it))
+                }
+            }.filter { it != null }.toList()
+        clockOnCardInfo.imageBitmaps = urls
+        emit(clockOnCardInfo)
     }
 
-    fun getImages(urls: List<String>) = urls.asFlow()
-        .flatMapMerge { url ->
-        flow {
-            val imageRequest = ImageRequest.Builder(applicationContext)
-                .data(url)
-                .build()
-            val imageResult = imageLoader.execute(request = imageRequest)
-            emit(imageResult)
-        }
+    fun getTodayPushMessage(): Flow<List<String>> = flow {
+        val todayMessage = shanBayApi.getTodayPushMessage()
+        emit(todayMessage)
+    }
+
+    private suspend fun getImage(url: String): ImageBitmap? {
+        val imageRequest = ImageRequest.Builder(applicationContext)
+            .data(url)
+            .build()
+        return imageLoader.execute(request = imageRequest).drawable?.toBitmap()?.asImageBitmap()
     }
 }

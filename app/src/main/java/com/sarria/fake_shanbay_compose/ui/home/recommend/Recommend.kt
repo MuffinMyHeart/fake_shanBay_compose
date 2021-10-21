@@ -1,19 +1,14 @@
 package com.sarria.fake_shanbay_compose.ui.home.recommend
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.data.model.ClockOnCardInfo
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCard
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCardWithBigImage
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ShanBaySwipeRefreshIndicator
@@ -43,9 +39,9 @@ fun RecommendPage(
 ) {
 
     val recommendViewModel: RecommendViewModel = hiltViewModel()
-    val articles = recommendViewModel.state.value.articles
-    val isLoading = recommendViewModel.state.value.isLoading
-    val swipeState = rememberSwipeRefreshState(isRefreshing = isLoading)
+    val recommendState by recommendViewModel.state.collectAsState()
+
+    val swipeState = rememberSwipeRefreshState(isRefreshing = recommendState.isLoading)
     SwipeRefresh(
         state = swipeState,
         onRefresh = { recommendViewModel.getArticles() },
@@ -56,54 +52,68 @@ fun RecommendPage(
                 refreshingOffset = 32.dp
             )
         },
-        refreshTriggerDistance = 100.dp
+        refreshTriggerDistance = 64.dp
     ) {
-        val listState = rememberLazyListState()
-        LazyColumn(
-            modifier = modifier,
-            state = listState,
+        val scrollState = rememberScrollState()
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState),
         ) {
-            item {
+
+            val isLoading = recommendState.isLoading
+            val onError = recommendState.onError
+            val clockOnCardInfo = recommendState.clockOnCardInfo
+            val articles = recommendState.articles
+            val todayPushMessage = recommendState.todayPushMessage
+
+            if (isLoading || onError || clockOnCardInfo == null || articles.isNullOrEmpty() || todayPushMessage.isNullOrEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator()
+                    } else if (onError) {
+                        Text(text = "发生了一些问题: ${recommendState.errorMsg}")
+                    }
+                }
+            } else {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
                 ) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    ClockOnCard(modifier = Modifier.fillMaxWidth())
+                    ClockOnCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        clockOnCardInfo = clockOnCardInfo
+                    )
                     Spacer(modifier = Modifier.height(24.dp))
-                    TodayRow(modifier = Modifier.fillMaxWidth())
+                    TodayRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        todayPushMessage = todayPushMessage
+                    )
                     Spacer(modifier = Modifier.height(24.dp))
                 }
-            }
 
-            if (articles.isNullOrEmpty() || isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillParentMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            } else {
-                itemsIndexed(articles, key = { _, item ->
-                    item.englishTitle
-                }) { index, item ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                    ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
+                    articles.forEachIndexed { index, article ->
                         if (index == 0) {
                             ArticleCardWithBigImage(
                                 modifier = Modifier.fillMaxWidth(),
-                                article = item
+                                article = article,
                             )
                         } else {
                             ArticleCard(
                                 modifier = Modifier.fillMaxWidth(),
-                                article = item
+                                article = article
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -117,7 +127,7 @@ fun RecommendPage(
 
 //打卡行
 @Composable
-fun ClockOnCard(modifier: Modifier) {
+fun ClockOnCard(modifier: Modifier, clockOnCardInfo: ClockOnCardInfo) {
 
     Row(
         modifier = modifier
@@ -136,7 +146,7 @@ fun ClockOnCard(modifier: Modifier) {
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "152",
+                    text = clockOnCardInfo.totalDays.toString(),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = LocalContentColor.current.copy(alpha = .7f)
@@ -163,7 +173,7 @@ fun ClockOnCard(modifier: Modifier) {
                                 fontSize = 18.sp,
                             )
                         ) {
-                            append(" 0 ")
+                            append(" ${clockOnCardInfo.todayReads} ")
                         }
                         append("篇")
                     },
@@ -176,47 +186,49 @@ fun ClockOnCard(modifier: Modifier) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box {
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .size(12.dp)
-                                .clip(CircleShape)
-                                .border(.5.dp, Color.White, CircleShape)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.mipmap.heads1),
-                                contentDescription = "heads"
-                            )
-                        }
+                        if (clockOnCardInfo.imageBitmaps.size >= 3) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                                    .size(12.dp)
+                                    .clip(CircleShape)
+                                    .border(.5.dp, Color.White, CircleShape)
+                            ) {
+                                Image(
+                                    bitmap = clockOnCardInfo.imageBitmaps[0]!!,
+                                    contentDescription = "heads"
+                                )
+                            }
 
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .size(12.dp)
-                                .clip(CircleShape)
-                                .border(.5.dp, Color.White, CircleShape)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.mipmap.heads2),
-                                contentDescription = "heads"
-                            )
-                        }
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .size(12.dp)
+                                    .clip(CircleShape)
+                                    .border(.5.dp, Color.White, CircleShape)
+                            ) {
+                                Image(
+                                    bitmap = clockOnCardInfo.imageBitmaps[1]!!,
+                                    contentDescription = "heads"
+                                )
+                            }
 
-                        Box(
-                            modifier = Modifier
-                                .size(12.dp)
-                                .clip(CircleShape)
-                                .border(.5.dp, Color.White, CircleShape)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.mipmap.heads3),
-                                contentDescription = "heads"
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .clip(CircleShape)
+                                    .border(.5.dp, Color.White, CircleShape)
+                            ) {
+                                Image(
+                                    bitmap = clockOnCardInfo.imageBitmaps[2]!!,
+                                    contentDescription = "heads"
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "66737人参与挑战 >",
+                        text = "${clockOnCardInfo.totalJoiner}人参与挑战 >",
                         fontSize = 9.sp,
                         color = LocalContentColor.current.copy(alpha = .4f)
                     )
@@ -244,29 +256,30 @@ fun ClockOnCard(modifier: Modifier) {
 
 @Composable
 fun TodayRow(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    todayPushMessage: List<String>
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "今日短文",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+        Text(
+            text = "今日短文",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        VerticalScrollText(
+            modifier = Modifier
+                .weight(1f),
+            scrollList = todayPushMessage,
+            textStyle = LocalTextStyle.current.copy(
+                fontSize = 13.sp,
+                color = LocalContentColor.current.copy(.3f),
+                fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            VerticalScrollText(
-                scrollList = listOf("中国立场，全球视野", "每晚 7:00 准时更新"),
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 13.sp,
-                    color = LocalContentColor.current.copy(.3f),
-                    fontWeight = FontWeight.ExtraBold
-                )
-            )
-        }
+        )
 
         CompositionLocalProvider(LocalContentAlpha provides .5f) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -290,7 +303,7 @@ fun HomeAppBarPreView() {
     Fake_shanBay_composeTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column {
-                ClockOnCard(modifier = Modifier.fillMaxWidth())
+//                ClockOnCard(modifier = Modifier.fillMaxWidth(), clockOnCardInfo = clockOnCardInfo)
             }
         }
     }
@@ -302,7 +315,7 @@ fun TodayRowPreView() {
     Fake_shanBay_composeTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column {
-                TodayRow(Modifier.fillMaxWidth())
+//                TodayRow(Modifier.fillMaxWidth())
             }
         }
     }

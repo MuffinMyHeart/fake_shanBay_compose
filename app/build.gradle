@@ -28,7 +28,6 @@ android {
         }
     }
     compileOptions {
-        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -39,6 +38,7 @@ android {
                 "-Xallow-jvm-ir-dependencies",
                 "-Xskip-prerelease-check",
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                '-Xopt-in=kotlin.RequiresOptIn',
                 "-Xuse-experimental=androidx.compose.animation.ExperimentalAnimationApi",
                 "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi",
                 "-Xopt-in=com.google.accompanist.pager.ExperimentalPagerApi",
@@ -54,7 +54,7 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.30'
+        kotlinCompilerVersion '1.5.31'
     }
     packagingOptions {
         resources {

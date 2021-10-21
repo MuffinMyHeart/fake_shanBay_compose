@@ -1,28 +1,25 @@
 package com.sarria.fake_shanbay_compose.ui.home.recommend
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sarria.fake_shanbay_compose.data.RecommendRepository
 import com.sarria.fake_shanbay_compose.data.model.Article
-import com.sarria.fake_shanbay_compose.data.net.ShanBayApi
+import com.sarria.fake_shanbay_compose.data.model.ClockOnCardInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 @HiltViewModel
 class RecommendViewModel @Inject constructor(
     private val repository: RecommendRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ArticlesState())
-    val state: StateFlow<ArticlesState> = _state
+    private val _state = MutableStateFlow(RecommendState())
+    val state: StateFlow<RecommendState> = _state
 
     init {
         getArticles()
@@ -30,23 +27,50 @@ class RecommendViewModel @Inject constructor(
 
     fun getArticles() {
         viewModelScope.launch {
-            _state.value = state.value.copy(isLoading = true)
-            delay(1000)
-            try {
-                val articleFlow = repository.getArticleByUserId("sarria")
-                val articles = articleFlow.stateIn(this).value
+            _state.update { it.copy(isLoading = true) }
+            val spendTime = measureTimeMillis {
+                val articles = flow {
+                    emit(repository.getArticles("sarria").toList())
+                }
 
-//                _state.value = state.value.copy(articles = api.getArticles())
-            } catch (e: Exception) {
-                Log.e("recommendViewModel", "getArticles: $e")
-            } finally {
-                _state.value = state.value.copy(isLoading = false)
+                val clockOnCardInfo = repository.getClockOnCardInfo("sarria")
+
+                val todayPushMessage = repository.getTodayPushMessage()
+
+                //合并流
+                combine(
+                    articles,
+                    clockOnCardInfo,
+                    todayPushMessage
+                ) { _articles, _clockOnCardInfo, _todayPushMessage ->
+                    assert(_articles.size >= 5) { "articles.size < 5" }
+                    _state.update {
+                        it.copy(
+                            articles = _articles,
+                            clockOnCardInfo = _clockOnCardInfo,
+                            todayPushMessage = _todayPushMessage,
+                        )
+                    }
+                }.catch { cause: Throwable ->
+                    Log.e("RecommendViewModel", " ${cause.message}")
+                    _state.update { it.copy(onError = true, errorMsg = cause.message) }
+                }.collect()
             }
+
+            //如果小于1.5s至少等待1.5s
+            if (spendTime < 1500) {
+                delay(1500 - spendTime)
+            }
+            _state.update { it.copy(isLoading = false) }
         }
     }
 }
 
-data class ArticlesState(
+data class RecommendState(
     val articles: List<Article>? = null,
+    val clockOnCardInfo: ClockOnCardInfo? = null,
+    val todayPushMessage: List<String>? = null,
     val isLoading: Boolean = false,
+    val onError: Boolean = false,
+    val errorMsg: String? = null
 )
