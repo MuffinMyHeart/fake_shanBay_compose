@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerDefaults
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.sarria.fake_shanbay_compose.R
@@ -47,7 +49,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.max
 
 @Composable
 fun Home() {
@@ -91,12 +92,12 @@ fun ScrollPage(modifier: Modifier) {
             )
         }
         val coroutineScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState(pageCount = pages.size)
-
+        val pagerState = rememberPagerState()
+        val currentPage = pagerState.currentPage
 
         ScrollableTabRow(
             backgroundColor = MaterialTheme.colors.background,
-            selectedTabIndex = pagerState.currentPage,
+            selectedTabIndex = currentPage,
             edgePadding = 0.dp,
             indicator = { tabPositions ->
                 ShanBayTabIndicator(
@@ -114,18 +115,19 @@ fun ScrollPage(modifier: Modifier) {
                 Tab(
                     enabled = false,
                     modifier = Modifier.padding(4.dp),
-                    selected = pagerState.currentPage == index,
+                    selected = currentPage == index,
                     onClick = {},
                     selectedContentColor = LocalContentColor.current.copy(.73f),
                     unselectedContentColor = LocalContentColor.current.copy(ContentAlpha.disabled)
                 ) {
 
-                    val scale by animateFloatAsState(targetValue = if (pagerState.currentPage == index) 1.1f else 1f)
+                    val scale by animateFloatAsState(targetValue = if (currentPage == index) 1.1f else 1f)
                     if (title == "畅读会员") {
                         Text(
                             modifier = Modifier
                                 .clickable {
                                     coroutineScope.launch {
+//                                        pagerState.scrollToPage(index)
                                         pagerState.animateScrollToPage(index)
                                     }
                                 }
@@ -143,6 +145,7 @@ fun ScrollPage(modifier: Modifier) {
                             modifier = Modifier
                                 .clickable {
                                     coroutineScope.launch {
+//                                        pagerState.scrollToPage(index)
                                         pagerState.animateScrollToPage(index)
                                     }
                                 }
@@ -153,34 +156,52 @@ fun ScrollPage(modifier: Modifier) {
                         )
                     }
                 }
-
             }
         }
-
+        val density = LocalDensity.current
         HorizontalPager(
+            pages.size,
             state = pagerState,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
-        ) { page ->
-            if (page == 0) {
-                RecommendPage(
-                    modifier = Modifier
-                        .fillMaxSize()
+                .fillMaxWidth(),
+            key = { it },
+            flingBehavior = PagerDefaults.flingBehavior(
+                state = pagerState,
+                decayAnimationSpec = remember {
+                    FloatExponentialDecaySpec().generateDecayAnimationSpec()
+                },
+                snapAnimationSpec = tween(
+                    durationMillis = 250,
+                    easing = LinearEasing
                 )
-            } else {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Card(Modifier.padding(16.dp), elevation = 1.dp) {
-                        Box(Modifier.fillMaxSize()) {
-                            Text(
-                                text = "Page: ${pages[page]}",
-                                style = MaterialTheme.typography.h4,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    }
-                }
-            }
+            )
+        ) { page ->
+
+            RecommendPage(
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+
+//            MemberPage(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                )
+
+
+//            Box(modifier = Modifier.fillMaxSize()) {
+//                Card(Modifier.padding(16.dp), elevation = 1.dp) {
+//                    Box(Modifier.fillMaxSize()) {
+//                        Text(
+//                            text = "Page: ${pages[page]}",
+//                            style = MaterialTheme.typography.h4,
+//                            modifier = Modifier.align(Alignment.Center)
+//                        )
+//                    }
+//                }
+//            }
+
+
         }
     }
 }
@@ -271,18 +292,19 @@ fun ShanBayTabIndicator(
                 if (pagerState.pageCount == 0) return@composed this
 
                 val targetPage = pagerState.fixedTargetPage()
-                val currentColor = colors[pagerState.currentPage]
+                val currentPage = pagerState.currentPage
+                val currentColor = colors[currentPage]
                 val targetColor = colors[targetPage]
-                val currentTab = tabPositions[pagerState.currentPage]
+                val currentTab = tabPositions[currentPage]
                 val targetTab = tabPositions.getOrNull(targetPage)
+                val currentOffset = pagerState.currentPageOffset
 
                 val targetIndicatorOffset: Dp
                 val color: Color
-                if (targetTab != null) {
-                    val targetDistance = (targetPage - pagerState.currentPage).absoluteValue
+                if (targetTab != null && targetPage != currentPage) {
+                    val targetDistance = (targetPage - currentPage).absoluteValue
                     //滑动完成百分数
-                    val fraction =
-                        (pagerState.currentPageOffset / max(targetDistance, 1)).absoluteValue
+                    val fraction = (currentOffset.absoluteValue / targetDistance)
 
                     targetIndicatorOffset = lerp(
                         currentTab.left + (currentTab.width - width) / 2,
@@ -290,11 +312,8 @@ fun ShanBayTabIndicator(
                         fraction
                     )
 
-//                    println("targetDistance： $targetDistance , fraction: $fraction , currentPage:${pagerState.currentPage},currentOffSet: ${pagerState.currentPageOffset}  , targetPage: $targetPage")
-
+                    println("targetDistance： $targetDistance , fraction: $fraction , currentPage:${currentPage},currentOffSet: $currentOffset  , targetPage: $targetPage")
                     color = lerp(currentColor, targetColor, fraction)
-
-
                 } else {
                     targetIndicatorOffset = currentTab.left + (currentTab.width - width) / 2
                     color = currentColor
@@ -385,7 +404,6 @@ fun PagerState.fixedTargetPage() = when {
     currentPageOffset < 0 -> floor(currentPageOffset + currentPage).toInt().coerceAtLeast(0)
     else -> ceil(currentPageOffset + currentPage).toInt()
         .coerceAtMost((pageCount - 1).coerceAtLeast(0))
-
 }
 
 @Preview(showBackground = true)

@@ -2,6 +2,7 @@ package com.sarria.fake_shanbay_compose.di
 
 import android.app.Application
 import coil.ImageLoader
+import com.sarria.fake_shanbay_compose.data.MemberRepository
 import com.sarria.fake_shanbay_compose.data.RecommendRepository
 import com.sarria.fake_shanbay_compose.data.net.ShanBayApi
 import dagger.Module
@@ -40,4 +41,12 @@ object AppModule {
         applicationContext: Application
     ): RecommendRepository =
         RecommendRepository(shanBayApi, imageLoader, applicationContext)
+
+    @Provides
+    @Singleton
+    fun providesMemberRepository(
+        shanBayApi: ShanBayApi,
+        imageLoader: ImageLoader,
+        applicationContext: Application
+    ): MemberRepository = MemberRepository(shanBayApi, imageLoader, applicationContext)
 }

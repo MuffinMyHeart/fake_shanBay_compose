@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.data.commonState.RefreshState
 import com.sarria.fake_shanbay_compose.data.model.ClockOnCardInfo
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCard
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ArticleCardWithBigImage
@@ -33,6 +34,9 @@ import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
 
+/**
+ * 推荐页
+ */
 @Composable
 fun RecommendPage(
     modifier: Modifier = Modifier
@@ -40,14 +44,15 @@ fun RecommendPage(
 
     val recommendViewModel: RecommendViewModel = hiltViewModel()
     val recommendState by recommendViewModel.state.collectAsState()
+    val refreshState = recommendState.refreshState
 
-    val swipeState = rememberSwipeRefreshState(isRefreshing = recommendState.isLoading)
+    val swipeState = rememberSwipeRefreshState(isRefreshing = refreshState is RefreshState.Loading)
     SwipeRefresh(
         state = swipeState,
-        onRefresh = { recommendViewModel.getArticles() },
-        indicator = { s, trigger ->
+        onRefresh = { recommendViewModel.refreshPage() },
+        indicator = { state, trigger ->
             ShanBaySwipeRefreshIndicator(
-                state = s,
+                state = state,
                 refreshTriggerDistance = trigger,
                 refreshingOffset = 32.dp
             )
@@ -61,26 +66,33 @@ fun RecommendPage(
                 .verticalScroll(scrollState),
         ) {
 
-            val isLoading = recommendState.isLoading
-            val onError = recommendState.onError
             val clockOnCardInfo = recommendState.clockOnCardInfo
             val articles = recommendState.articles
             val todayPushMessage = recommendState.todayPushMessage
 
-            if (isLoading || onError || clockOnCardInfo == null || articles.isNullOrEmpty() || todayPushMessage.isNullOrEmpty()) {
+            if (refreshState is RefreshState.Loading) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (isLoading) {
-                        CircularProgressIndicator()
-                    } else if (onError) {
-                        Text(text = "发生了一些问题: ${recommendState.errorMsg}")
-                    }
+                    CircularProgressIndicator()
                 }
-            } else {
+            }
+
+            if (refreshState is RefreshState.Error) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "发生了一些问题: ${refreshState.errorMsg}")
+                }
+            }
+
+            if (refreshState is RefreshState.Success && clockOnCardInfo != null && !articles.isNullOrEmpty() && !todayPushMessage.isNullOrEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
