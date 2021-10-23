@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerDefaults
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.sarria.fake_shanbay_compose.R
@@ -41,7 +39,6 @@ import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
 import com.sarria.fake_shanbay_compose.ui.commonLayout.TabPosition
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
-import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
 import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
@@ -158,50 +155,37 @@ fun ScrollPage(modifier: Modifier) {
                 }
             }
         }
-        val density = LocalDensity.current
+
+
+
         HorizontalPager(
             pages.size,
             state = pagerState,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            key = { it },
-            flingBehavior = PagerDefaults.flingBehavior(
-                state = pagerState,
-                decayAnimationSpec = remember {
-                    FloatExponentialDecaySpec().generateDecayAnimationSpec()
-                },
-                snapAnimationSpec = tween(
-                    durationMillis = 250,
-                    easing = LinearEasing
-                )
-            )
+            contentPadding = PaddingValues(16.dp),
         ) { page ->
-
-            RecommendPage(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-
+//            RecommendPage(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//            )
+//
 //            MemberPage(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                )
+//                modifier = Modifier
+//                    .fillMaxSize()
+//            )
 
 
-//            Box(modifier = Modifier.fillMaxSize()) {
-//                Card(Modifier.padding(16.dp), elevation = 1.dp) {
-//                    Box(Modifier.fillMaxSize()) {
-//                        Text(
-//                            text = "Page: ${pages[page]}",
-//                            style = MaterialTheme.typography.h4,
-//                            modifier = Modifier.align(Alignment.Center)
-//                        )
-//                    }
-//                }
-//            }
-
-
+            Card {
+                Box(Modifier.fillMaxSize()) {
+                    Text(
+                        text = "Page: ${pages[page]}",
+                        style = MaterialTheme.typography.h4,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
         }
     }
 }
