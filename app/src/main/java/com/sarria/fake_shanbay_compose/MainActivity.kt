@@ -26,13 +26,10 @@ import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 
-val Context.datastore :DataStore<Preferences> by preferencesDataStore(name = "login")
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @ExperimentalPagerApi
-    @ExperimentalAnimationApi
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -48,8 +45,6 @@ class MainActivity : ComponentActivity() {
 
 
 //是闪屏页还是主调用流程
-@ExperimentalPagerApi
-@ExperimentalAnimationApi
 @Composable
 fun ShanBayApp() {
     var splashed by rememberSaveable {
