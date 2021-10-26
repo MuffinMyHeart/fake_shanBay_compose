@@ -7,10 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -25,10 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.lerp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.HorizontalPager
@@ -39,6 +33,7 @@ import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
 import com.sarria.fake_shanbay_compose.ui.commonLayout.TabPosition
 import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
+import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
 import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
@@ -164,12 +159,47 @@ fun ScrollPage(modifier: Modifier) {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
         ) { page ->
-//            RecommendPage(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//            )
+            if (page == 0) {
+                RecommendPage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            } else if (page == 1) {
+                BoxWithConstraints {
+                    var clicked by remember {
+                        mutableStateOf(false)
+                    }
+                    val columnWitch = maxWidth
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { clicked = !clicked }) {
+                            val offsetX by animateDpAsState(targetValue = if (clicked) (columnWitch - 32.dp) / 2 else 0.dp)
+                            val offsetY by animateDpAsState(targetValue = if (clicked) 32.dp / 2 else 0.dp)
+                            val scale by animateFloatAsState(targetValue = if (clicked) 1.5f else 1f)
+                            
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp * scale)
+                                    .offset(x = offsetX, y = offsetY)
+                                    .background(Color.Cyan)
+                            )
+
+                        }
+                    }
+                }
+            } else {
+                Card {
+                    Box(Modifier.fillMaxSize()) {
+                        Text(
+                            text = "Page: ${pages[page]}",
+                            style = MaterialTheme.typography.h4,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+            }
 //
 //            MemberPage(
 //                modifier = Modifier
@@ -177,15 +207,15 @@ fun ScrollPage(modifier: Modifier) {
 //            )
 
 
-            Card {
-                Box(Modifier.fillMaxSize()) {
-                    Text(
-                        text = "Page: ${pages[page]}",
-                        style = MaterialTheme.typography.h4,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
+//            Card {
+//                Box(Modifier.fillMaxSize()) {
+//                    Text(
+//                        text = "Page: ${pages[page]}",
+//                        style = MaterialTheme.typography.h4,
+//                        modifier = Modifier.align(Alignment.Center)
+//                    )
+//                }
+//            }
         }
     }
 }
