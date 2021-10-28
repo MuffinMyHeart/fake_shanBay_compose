@@ -1,4 +1,4 @@
-package com.sarria.fake_shanbay_compose.ui.home
+package com.sarria.fake_shanbay_compose.ui.main.home
 
 
 import androidx.compose.animation.core.*
@@ -29,11 +29,11 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.sarria.fake_shanbay_compose.R
-import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
+import com.sarria.fake_shanbay_compose.ui.commonLayout.*
 import com.sarria.fake_shanbay_compose.ui.commonLayout.ScrollableTabRow
 import com.sarria.fake_shanbay_compose.ui.commonLayout.TabPosition
-import com.sarria.fake_shanbay_compose.ui.commonLayout.VerticalScrollText
-import com.sarria.fake_shanbay_compose.ui.home.recommend.RecommendPage
+import com.sarria.fake_shanbay_compose.ui.main.home.member.MemberPage
+import com.sarria.fake_shanbay_compose.ui.main.home.recommend.RecommendPage
 import com.sarria.fake_shanbay_compose.ui.theme.DarkRed
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
 import com.sarria.fake_shanbay_compose.ui.theme.LowAlpha
@@ -43,8 +43,8 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 @Composable
-fun Home() {
-    BackgroundSurface(modifier = Modifier.fillMaxSize()) {
+fun Home(modifier: Modifier = Modifier) {
+    BackgroundSurface(modifier =modifier) {
         Column {
             HomeTopAppBar(
                 modifier = Modifier
@@ -55,11 +55,7 @@ fun Home() {
 
             ScrollPage(
                 Modifier
-                    .fillMaxSize()
-                    .navigationBarsPadding()
-                    .padding(bottom = 12.dp)
-                    .clip(RoundedCornerShape(0.dp, 0.dp, 24.dp, 24.dp))
-            )
+                    .fillMaxSize())
         }
     }
 }
@@ -117,7 +113,7 @@ fun ScrollPage(modifier: Modifier) {
                     if (title == "畅读会员") {
                         Text(
                             modifier = Modifier
-                                .clickable {
+                                .noRippleClickable {
                                     coroutineScope.launch {
 //                                        pagerState.scrollToPage(index)
                                         pagerState.animateScrollToPage(index)
@@ -135,7 +131,7 @@ fun ScrollPage(modifier: Modifier) {
                     } else {
                         Text(
                             modifier = Modifier
-                                .clickable {
+                                .noRippleClickable {
                                     coroutineScope.launch {
 //                                        pagerState.scrollToPage(index)
                                         pagerState.animateScrollToPage(index)
@@ -166,29 +162,7 @@ fun ScrollPage(modifier: Modifier) {
                         .fillMaxSize()
                 )
             } else if (page == 1) {
-                BoxWithConstraints {
-                    var clicked by remember {
-                        mutableStateOf(false)
-                    }
-                    val columnWitch = maxWidth
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { clicked = !clicked }) {
-                            val offsetX by animateDpAsState(targetValue = if (clicked) (columnWitch - 32.dp) / 2 else 0.dp)
-                            val offsetY by animateDpAsState(targetValue = if (clicked) 32.dp / 2 else 0.dp)
-                            val scale by animateFloatAsState(targetValue = if (clicked) 1.5f else 1f)
-                            
-                            Box(
-                                modifier = Modifier
-                                    .size(32.dp * scale)
-                                    .offset(x = offsetX, y = offsetY)
-                                    .background(Color.Cyan)
-                            )
-
-                        }
-                    }
-                }
+                MemberPage(modifier = Modifier.fillMaxSize())
             } else {
                 Card {
                     Box(Modifier.fillMaxSize()) {
@@ -200,11 +174,6 @@ fun ScrollPage(modifier: Modifier) {
                     }
                 }
             }
-//
-//            MemberPage(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//            )
 
 
 //            Card {
@@ -326,7 +295,7 @@ fun ShanBayTabIndicator(
                         fraction
                     )
 
-                    println("targetDistance： $targetDistance , fraction: $fraction , currentPage:${currentPage},currentOffSet: $currentOffset  , targetPage: $targetPage")
+//                    println("targetDistance： $targetDistance , fraction: $fraction , currentPage:${currentPage},currentOffSet: $currentOffset  , targetPage: $targetPage")
                     color = lerp(currentColor, targetColor, fraction)
                 } else {
                     targetIndicatorOffset = currentTab.left + (currentTab.width - width) / 2

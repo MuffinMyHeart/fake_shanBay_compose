@@ -19,7 +19,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.sarria.fake_shanbay_compose.ui.Main
+import com.sarria.fake_shanbay_compose.ui.App
 import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.splash.Splash
 import com.sarria.fake_shanbay_compose.ui.theme.Fake_shanBay_composeTheme
@@ -70,7 +70,7 @@ fun ShanBayApp() {
     BackgroundSurface(modifier = Modifier.fillMaxSize()) {
         Crossfade(targetState = splashed) {
             if (it){
-                Main()
+                App()
             } else {
                 Splash {
                     splashed = true

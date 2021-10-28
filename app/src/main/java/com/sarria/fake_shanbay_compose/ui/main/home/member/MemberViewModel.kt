@@ -1,4 +1,4 @@
-package com.sarria.fake_shanbay_compose.ui.home.member
+package com.sarria.fake_shanbay_compose.ui.main.home.member
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

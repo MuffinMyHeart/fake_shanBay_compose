@@ -1,4 +1,4 @@
-package com.sarria.fake_shanbay_compose.ui.home.recommend
+package com.sarria.fake_shanbay_compose.ui.main.home.recommend
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
