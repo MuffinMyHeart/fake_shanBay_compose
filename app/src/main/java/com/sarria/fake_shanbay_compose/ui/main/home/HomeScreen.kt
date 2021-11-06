@@ -43,7 +43,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier) {
     BackgroundSurface(modifier =modifier) {
         Column {
             HomeTopAppBar(

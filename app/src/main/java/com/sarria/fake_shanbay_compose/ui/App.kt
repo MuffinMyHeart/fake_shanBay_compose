@@ -6,9 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.sarria.fake_shanbay_compose.ui.main.home.Home
 import com.sarria.fake_shanbay_compose.ui.login.Login
-import com.sarria.fake_shanbay_compose.ui.main.Main
+import com.sarria.fake_shanbay_compose.ui.main.MainScreen
 
 //主屏幕
 @Composable
@@ -18,7 +17,7 @@ fun App() {
     }
     Crossfade(targetState = login) {
         if (it) {
-            Main()
+            MainScreen()
         } else {
             Login { login = true }
         }
