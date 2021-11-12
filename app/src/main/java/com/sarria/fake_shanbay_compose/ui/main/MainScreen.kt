@@ -15,10 +15,11 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.sarria.fake_shanbay_compose.ui.commonLayout.noRippleClickable
+import com.sarria.fake_shanbay_compose.navigation.BottomBarScreen
+import com.sarria.fake_shanbay_compose.navigation.BottomNavGraph
 
 
 /**
@@ -62,7 +63,8 @@ fun BottomNavigationBar(navHostController: NavHostController) {
             BottomBarScreen.values().forEach { screen ->
                 BottomItem(
                     screen = screen,
-                    isSelected = currentDestination?.hierarchy?.any { screen.route == it.route } == true) {
+                    isSelected = currentDestination?.hierarchy?.any { screen.route == it.route } == true
+                ) {
                     navHostController.navigate(screen.route) {
                         popUpTo(navHostController.graph.findStartDestination().id)
                         launchSingleTop = true

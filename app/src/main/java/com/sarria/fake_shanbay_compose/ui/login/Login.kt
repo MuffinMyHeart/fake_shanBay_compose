@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -20,18 +18,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.insets.systemBarsPadding
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.PlayerView
 import com.sarria.fake_shanbay_compose.R
 import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import com.sarria.fake_shanbay_compose.ui.theme.LogoColor
 import com.sarria.fake_shanbay_compose.ui.theme.VioletDark
-import com.sarria.fake_shanbay_compose.utils.rememberVideoViewWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+
 
 @Composable
 fun Login(onLoginEnd: () -> Unit = {}) {
@@ -44,7 +51,9 @@ fun Login(onLoginEnd: () -> Unit = {}) {
 
 @Composable
 fun LoginContent(onLoginEnd: () -> Unit) {
-    VideoBackground()
+
+    ExoPlayerBackground()
+
     Column(
         modifier = Modifier
             .systemBarsPadding()
@@ -76,7 +85,6 @@ fun LoginContent(onLoginEnd: () -> Unit) {
                     it.animateTo(1f, animateSpec2000)
                 }
             }
-
 
             launch {
                 delay(600)
@@ -286,18 +294,76 @@ fun LoginText(modifier: Modifier, englishAlpha: Float, chineseAlpha: Float) {
     }
 }
 
-@Composable
-fun VideoBackground() {
-    val packageName = LocalContext.current.applicationContext.packageName
-    val uri = Uri.parse("android.resource://$packageName/${R.raw.even}")
-    val video = rememberVideoViewWithLifecycle()
 
-    AndroidView(factory = { video }) {
-        video.setVideoURI(uri)
-        video.setOnCompletionListener {
-            it.start()
+@Composable
+fun ExoPlayerBackground() {
+    val context = LocalContext.current
+    var prepared by remember {
+        mutableStateOf(false)
+    }
+
+    val player = remember {
+        val loadControl =
+            DefaultLoadControl.Builder()
+                .setPrioritizeTimeOverSizeThresholds(false)
+                .build()
+
+        SimpleExoPlayer
+            .Builder(context)
+            .setLoadControl(loadControl)
+            .build()
+    }
+
+    val playerView: PlayerView = remember {
+        PlayerView(context).apply {
+            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
         }
-        video.start()
+    }
+
+    SideEffect {
+        val packageName = context.packageName
+        val uri = Uri.parse("android.resource://$packageName/${R.raw.even}")
+        playerView.useController = false
+        player.repeatMode = Player.REPEAT_MODE_ONE
+        player.setMediaItem(MediaItem.fromUri(uri))
+        playerView.player = player
+        player.prepare()
+        player.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                if (playbackState == Player.STATE_READY) {
+                    prepared = true
+                }
+            }
+        })
+        player.playWhenReady = true
+    }
+
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    DisposableEffect(player) {
+        val lifecycleObserver = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> player.play()
+                Lifecycle.Event.ON_STOP -> player.pause()
+            }
+        }
+
+        lifecycle.addObserver(lifecycleObserver)
+
+        onDispose {
+            lifecycle.removeObserver(lifecycleObserver)
+            player.release()
+        }
+    }
+
+
+    if (prepared) {
+        AndroidView(
+            factory = {
+                playerView
+            },
+        )
     }
 }
 
@@ -309,9 +375,3 @@ class LoginAlphaState {
     val otherLoginAlpha = Animatable(0f)
     val agreementAlpha = Animatable(0f)
 }
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun LoginPreview() {
-//    Login()
-//}

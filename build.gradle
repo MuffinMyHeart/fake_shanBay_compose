@@ -2,7 +2,7 @@
 buildscript {
     ext {
         compose_version = '1.0.4'
-        accompanist_version = '0.21.0-beta'
+        accompanist_version = '0.21.2-beta'
         snapper_version = '0.1.0'
     }
     repositories {

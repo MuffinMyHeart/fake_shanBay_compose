@@ -16,28 +16,15 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import com.sarria.fake_shanbay_compose.R
+import com.sarria.fake_shanbay_compose.ui.commonLayout.BackgroundSurface
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //闪屏页
 @Composable
 fun Splash(onSplashEnd: () -> Unit) {
-//    val initColor = MaterialTheme.colors.surface
-//    val targetColor = MaterialTheme.colors.background
-//    val color = remember {
-//        Animatable(initColor)
-//    }
-//    LaunchedEffect(key1 = Unit) {
-//        launch {
-//            color.animateTo(
-//                targetValue = targetColor,
-//                animationSpec = tween(1000)
-//            )
-//        }
-//    }
-    Surface(
+    BackgroundSurface(
         modifier = Modifier.fillMaxSize(),
-//        color = color.value
     ) {
         SplashContent(onSplashEnd)
     }

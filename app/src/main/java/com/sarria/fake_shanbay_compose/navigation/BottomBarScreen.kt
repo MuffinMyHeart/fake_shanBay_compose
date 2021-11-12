@@ -1,9 +1,6 @@
-package com.sarria.fake_shanbay_compose.ui.main
+package com.sarria.fake_shanbay_compose.navigation
 
 import androidx.annotation.DrawableRes
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination
 import com.sarria.fake_shanbay_compose.R
 
@@ -20,11 +17,11 @@ enum class BottomBarScreen(
     My(route = "my", title = "我的", iconId = R.drawable.ic_my),
 }
 
-fun NavDestination.bottomBarScreen(): BottomBarScreen? = when(route){
+fun NavDestination.bottomBarScreen(): BottomBarScreen = when(route){
     "home" -> BottomBarScreen.Home
     "bookTable" -> BottomBarScreen.BookTable
     "course" -> BottomBarScreen.Course
     "find" -> BottomBarScreen.Find
     "my" -> BottomBarScreen.My
-    else -> null
+    else -> throw IllegalArgumentException()
 }
