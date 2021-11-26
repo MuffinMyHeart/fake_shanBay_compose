@@ -20,6 +20,6 @@ interface ShanBayApi {
     suspend fun getTodayPushMessage(): List<String>
 
     companion object {
-        const val BASE_URl = "http://101.132.97.199"
+        const val BASE_URl = "http://sarria.cn"
     }
 }

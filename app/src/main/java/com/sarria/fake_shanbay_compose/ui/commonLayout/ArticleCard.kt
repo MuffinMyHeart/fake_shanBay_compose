@@ -58,7 +58,7 @@ fun ArticleCardWithBigImage(
                         .background(
                             color = Color.Black.copy(alpha = .3f)
                         )
-                        .padding(horizontal = 8.dp),
+                        .padding(2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CompositionLocalProvider(LocalContentColor provides Color.White) {
@@ -212,7 +212,7 @@ fun ArticleCard(
                             .background(
                                 color = Color.Black.copy(alpha = .3f)
                             )
-                            .padding(horizontal = 8.dp),
+                            .padding(2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CompositionLocalProvider(LocalContentColor provides Color.White) {

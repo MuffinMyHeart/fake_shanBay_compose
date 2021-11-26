@@ -6,14 +6,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.sarria.fake_shanbay_compose.ui.main.bookTable.ProfilePage
 
 @Composable
 fun CourseScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "CourseScreen")
-    }
+    ProfilePage()
 }

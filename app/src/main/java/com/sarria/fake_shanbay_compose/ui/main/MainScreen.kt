@@ -32,7 +32,7 @@ fun MainScreen() {
         Column {
             BottomNavGraph(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .weight(1f),
                 navController = navHostController
             )

@@ -17,7 +17,7 @@ import com.sarria.fake_shanbay_compose.ui.main.home.HomeScreen
 import com.sarria.fake_shanbay_compose.ui.main.my.MyScreen
 
 @Composable
-fun BottomNavGraph(modifier: Modifier = Modifier, navController: NavHostController) {
+fun BottomNavGraph(modifier: Modifier, navController: NavHostController) {
 
     val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = {
         val initScreen =

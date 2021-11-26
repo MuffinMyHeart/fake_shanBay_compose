@@ -312,6 +312,9 @@ fun ExoPlayerBackground() {
             .Builder(context)
             .setLoadControl(loadControl)
             .build()
+            .apply {
+                repeatMode = Player.REPEAT_MODE_ONE
+            }
     }
 
     val playerView: PlayerView = remember {
@@ -324,7 +327,6 @@ fun ExoPlayerBackground() {
         val packageName = context.packageName
         val uri = Uri.parse("android.resource://$packageName/${R.raw.even}")
         playerView.useController = false
-        player.repeatMode = Player.REPEAT_MODE_ONE
         player.setMediaItem(MediaItem.fromUri(uri))
         playerView.player = player
         player.prepare()
