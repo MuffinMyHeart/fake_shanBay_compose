@@ -19,57 +19,59 @@ import com.sarria.fake_shanbay_compose.ui.main.my.MyScreen
 @Composable
 fun BottomNavGraph(modifier: Modifier, navController: NavHostController) {
 
-    val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? = {
-        val initScreen =
-            initialState.destination.bottomBarScreen()
-        val targetScreen =
-            targetState.destination.bottomBarScreen()
-        when {
-            targetScreen > initScreen -> slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Left,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearOutSlowInEasing
+    val enterTransition: (AnimatedContentScope<String>.(NavBackStackEntry, NavBackStackEntry) -> EnterTransition?)? =
+        { initialState, targetState ->
+            val initScreen =
+                initialState.destination.bottomBarScreen()
+            val targetScreen =
+                targetState.destination.bottomBarScreen()
+            when {
+                targetScreen > initScreen -> slideIntoContainer(
+                    AnimatedContentScope.SlideDirection.Left,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        delayMillis = 0,
+                        easing = LinearOutSlowInEasing
+                    )
                 )
-            )
-            targetScreen < initScreen -> slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Right,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearOutSlowInEasing
+                targetScreen < initScreen -> slideIntoContainer(
+                    AnimatedContentScope.SlideDirection.Right,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        delayMillis = 0,
+                        easing = LinearOutSlowInEasing
+                    )
                 )
-            )
-            else -> null
+                else -> null
+            }
         }
-    }
 
-    val exitTransition: (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?) = {
-        val initScreen =
-            initialState.destination.bottomBarScreen()
-        val targetScreen =
-            targetState.destination.bottomBarScreen()
-        when {
-            targetScreen > initScreen -> slideOutOfContainer(
-                AnimatedContentScope.SlideDirection.Left,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearOutSlowInEasing
+    val exitTransition: (AnimatedContentScope<String>.(NavBackStackEntry, NavBackStackEntry) -> ExitTransition?)? =
+        { initialState,targetState ->
+            val initScreen =
+                initialState.destination.bottomBarScreen()
+            val targetScreen =
+                targetState.destination.bottomBarScreen()
+            when {
+                targetScreen > initScreen -> slideOutOfContainer(
+                    AnimatedContentScope.SlideDirection.Left,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        delayMillis = 0,
+                        easing = LinearOutSlowInEasing
+                    )
                 )
-            )
-            targetScreen < initScreen -> slideOutOfContainer(
-                AnimatedContentScope.SlideDirection.Right,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearOutSlowInEasing
+                targetScreen < initScreen -> slideOutOfContainer(
+                    AnimatedContentScope.SlideDirection.Right,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        delayMillis = 0,
+                        easing = LinearOutSlowInEasing
+                    )
                 )
-            )
-            else -> null
+                else -> null
+            }
         }
-    }
 
     AnimatedNavHost(
         modifier = modifier,

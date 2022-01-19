@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleObserver
 import com.google.accompanist.insets.systemBarsPadding
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.MediaItem
@@ -38,6 +39,7 @@ import com.sarria.fake_shanbay_compose.ui.theme.VioletDark
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import kotlinx.coroutines.coroutineScope
 
 
 @Composable
@@ -376,4 +378,13 @@ class LoginAlphaState {
     val loginAlpha = Animatable(0f)
     val otherLoginAlpha = Animatable(0f)
     val agreementAlpha = Animatable(0f)
+}
+
+
+class A{
+   lateinit var a: A
+}
+
+fun a(){
+    val a = A()
 }
